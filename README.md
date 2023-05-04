@@ -14,40 +14,98 @@ This is an application responsible for maintaining a product database.
 
 
 ### **2. Use Case**
-- Manter o cadastro de produtos em uma base de dados própria, e possibilite as operações de cadastro, consulta, alteração de registros. 
+- Maintain the product registration in its own database, and allow registration operations, consultation, change of records.
 
 ```mermaid
-mindmap
-root((Product Mgmt))
-    Create
-    Read
-    Update
-    Delete
+flowchart LR
+    subgraph Domain
+        MSProduct --> DB
+    end
+    subgraph ER
+        Product --> Category
+    end
+    MSProduct{{\n MS Product Mgmt \n\n}}
+    DB[(Database)]
+    DB -.-> ER
+    
+    
 ```
 
 
-### **3. Entity Relationship**
+
+### **3. Class Diagram**
+- Below is an example model of the organization of microservice classes. 
+
+
 ```mermaid
----
-title: Product Catalog Management
----
-erDiagram
-    PRODUCT ||--|| CATEGORY : contains
-    PRODUCT {
-        uuid id
-        string name
-        boolean status
-        datetime created_on
-        string created_by
-        datetime modified_on
-        string created_by
+
+classDiagram
+    Product o--> Category
+    CategoryRepository -- Category
+    ProductRepository  -- Product
+    CategoryService -- CategoryRepository
+    ProductService  -- ProductRepository
+    JpaRepositories <|-- ProductRepository
+    JpaRepositories <|-- CategoryRepository
+    ProductController o-- ProductService
+    CategoryController o-- CategoryService
+
+    class Category {
+        - UUID id
+        - String name
+        - Boolean status
+        - Datetime createdOn
+        - String createBy
+        - Datetime modifiedOn
+        - String modifiedBy
+        + Category build()
     }
-    CATEGORY {
-        uuid id
-        string name
-        boolean status
-        datetime created_on
-        string created_by
-        datetime modified_on
-        string created_by
+
+    class Product {
+        - UUID id
+        - String name
+        - Boolean status
+        - Datetime createdOn
+        - String createBy
+        - Datetime modifiedOn
+        - String modifiedBy
+        - Category category
+        + Product build()
     }
+
+    class CategoryRepository {
+        <<inteface>>
+
+    }
+
+    class ProductRepository {
+        <<inteface>>
+    }
+
+    class JpaRepositories {
+        <<inteface>>
+        + Object save()
+        + Object delete()
+        + Object findById()
+        + Object findAll()
+    }
+
+    class ProductController {
+        - ProductService service
+        + ResponseEntity createProduct(productDTO)
+        + ResponseEntity updateProduct(idProduct, productDTO)
+        + ResponseEntity deleteProduct(idProduct)
+        + ResponseEntity findProduct()
+    }
+
+    class CategoryController {
+        - CategoryService categoryService
+        + ResponseEntity createCategory(categoryDTO)
+        + ResponseEntity updateCategory(idCategory, categoryDTO)
+        + ResponseEntity deleteCategory(idCategory)
+        + ResponseEntity findCategory()
+    }
+
+    
+```
+
