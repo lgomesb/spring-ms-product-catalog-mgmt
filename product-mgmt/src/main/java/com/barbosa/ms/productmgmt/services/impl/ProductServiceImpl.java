@@ -12,6 +12,7 @@ import com.barbosa.ms.productmgmt.domain.dto.ProductResponseDTO;
 import com.barbosa.ms.productmgmt.domain.dto.ResponseDTO;
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.entities.Product;
+import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
 import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 import com.barbosa.ms.productmgmt.services.ProductService;
@@ -26,31 +27,26 @@ public class ProductServiceImpl implements ProductService {
     private CategoryRepository categoryRepository;
 
     @Override
-    public <T extends DataDTO> ResponseDTO create(T dto) {
-        CreateProductDTO productDTO = (CreateProductDTO) dto;
+    public ProductRecord create(ProductRecord record) {        
         Category category = categoryRepository
-            .findById(UUID.fromString(productDTO.getIdCategory()))
+            .findById(record.idCategory())
             .orElseThrow(() -> new RuntimeException("Entity Category not found."));
             
         Product product = new Product();
         product.setCategory(category);
-        product.setName(productDTO.getName());
+        product.setName(record.name());
         Product productSaved = repository.save(product);
-        ProductResponseDTO productResponseDTO = new ProductResponseDTO();
-        productResponseDTO.setId(productSaved.getId());
-        productResponseDTO.setName(productSaved.getName());
-
-        return productResponseDTO;
+        return new ProductRecord(productSaved.getId(),productSaved.getName(), category.getId());
     }
 
     @Override
-    public ResponseDTO findById(UUID id) {
+    public ProductRecord findById(UUID id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }
 
     @Override
-    public <T extends DataDTO> void update(UUID id, T dto) {
+    public void update(ProductRecord record) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
@@ -60,5 +56,7 @@ public class ProductServiceImpl implements ProductService {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }
+
+    
 
 }

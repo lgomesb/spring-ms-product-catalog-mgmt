@@ -12,6 +12,8 @@ import com.barbosa.ms.productmgmt.domain.dto.ProductResponseDTO;
 import com.barbosa.ms.productmgmt.domain.dto.ResponseDTO;
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.entities.Product;
+import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
+import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
 import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 import com.barbosa.ms.productmgmt.services.CategoriaService;
@@ -33,22 +35,13 @@ public class ProductMgmtApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		CreateCategoryDTO dto = new CreateCategoryDTO();
-		dto.setName("Test01");
-
-		CategoryResponseDTO categoryResponse = (CategoryResponseDTO) categoriaService.create(dto);
-
-		CreateProductDTO productDTO = new CreateProductDTO();
-		productDTO.setName("Product-Test01");
-		productDTO.setIdCategory(categoryResponse.getId().toString());
-
-		ProductResponseDTO productResponse = (ProductResponseDTO) productService.create(productDTO);
+		CategoryRecord category = categoriaService.create(new CategoryRecord(null, "Test-Category-01"));
+		ProductRecord product = productService.create(new ProductRecord(null, "Product-Test01", category.id()));
 
 		System.out.println("CATEGORY");
-		System.out.println(categoryResponse);
+		System.out.println(category);
 		System.out.println("PRODUCT");
-		System.out.println(productResponse);
-
+		System.out.println(product);
 
 		// Category category = new Category();
 		// category.setName("computing");
@@ -58,7 +51,7 @@ public class ProductMgmtApplication implements CommandLineRunner {
 
 		// categoryRepository.save(category);
 		// productRepository.save(product);
-		
+
 	}
 
 }

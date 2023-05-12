@@ -1,5 +1,7 @@
 package com.barbosa.ms.productmgmt.services;
 
-public interface ProductService extends DomainService {
+import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
+
+public interface ProductService extends DomainService<ProductRecord> {
     
 }

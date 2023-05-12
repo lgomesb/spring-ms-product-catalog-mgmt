@@ -5,10 +5,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.barbosa.ms.productmgmt.domain.dto.CategoryResponseDTO;
-import com.barbosa.ms.productmgmt.domain.dto.DataDTO;
-import com.barbosa.ms.productmgmt.domain.dto.ResponseDTO;
 import com.barbosa.ms.productmgmt.domain.entities.Category;
+import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
 import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.services.CategoriaService;
 
@@ -19,19 +17,19 @@ public class CategoriaServiceImpl implements CategoriaService {
     private CategoryRepository repository;
 
     @Override
-    public <T extends DataDTO> ResponseDTO create(T dto) {
-        Category category = repository.save(new Category(dto.getName()) );
-        return new CategoryResponseDTO(category.getId(), category.getName());
+    public CategoryRecord create(CategoryRecord record) {
+        Category category = repository.save(new Category(record.name()) );
+        return new CategoryRecord(category.getId(), category.getName());
     }
 
     @Override
-    public ResponseDTO findById(UUID id) {
+    public CategoryRecord findById(UUID id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }
 
     @Override
-    public <T extends DataDTO> void update(UUID id, T dto) {
+    public void update(CategoryRecord record) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
@@ -41,5 +39,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }
+
+
     
 }
