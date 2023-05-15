@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
 import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
-import com.barbosa.ms.productmgmt.services.CategoriaService;
+import com.barbosa.ms.productmgmt.services.CategoryService;
 
 @Service
-public class CategoriaServiceImpl implements CategoriaService {
+public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryRepository repository;
