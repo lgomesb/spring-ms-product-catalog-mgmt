@@ -1,4 +1,5 @@
-
+server:
+  port: 8080
 spring:
     datasource:
         url: jdbc:h2:mem:testdb
@@ -13,5 +14,7 @@ spring:
         properties:
             hibernate:
                 format-sql: true
-
+springdoc:
+  api-docs:
+    path: /api-docs
     
