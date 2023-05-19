@@ -1,15 +1,10 @@
 package com.barbosa.ms.productmgmt.services.impl;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.barbosa.ms.productmgmt.domain.dto.CreateProductDTO;
-import com.barbosa.ms.productmgmt.domain.dto.DataDTO;
-import com.barbosa.ms.productmgmt.domain.dto.ProductResponseDTO;
-import com.barbosa.ms.productmgmt.domain.dto.ResponseDTO;
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.entities.Product;
 import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
@@ -52,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void delete() {
+    public void delete(UUID id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }

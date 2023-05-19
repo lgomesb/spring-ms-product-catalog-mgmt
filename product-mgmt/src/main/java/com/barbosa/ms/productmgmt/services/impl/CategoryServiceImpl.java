@@ -1,5 +1,6 @@
 package com.barbosa.ms.productmgmt.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +25,31 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryRecord findById(UUID id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        Category category = this.getCategoryById(id);
+        return new CategoryRecord(category.getId(), category.getName());
     }
 
+    
     @Override
     public void update(CategoryRecord record) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        Category category = this.getCategoryById(record.id());
+        category.setName(record.name());
+        category.setModifieldOn(LocalDateTime.now());
+        category.setModifiedBy("99999");
+        repository.save(category);      
     }
-
+    
     @Override
-    public void delete() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    public void delete(UUID id) {
+        Category category = this.getCategoryById(id);
+        repository.delete(category);
+
     }
-
-
+    
+    private Category getCategoryById(UUID id) {
+        return repository.findById(id)
+                  .orElseThrow(()-> new RuntimeException("Category not found by id: " + id.toString()));
+    }
+    
     
 }

@@ -1,0 +1,11 @@
+POST http://localhost:8080/category HTTP/1.1
+content-type: application/json
+
+{
+    "name": "sample"
+    
+}
+
+###
+
+GET http://localhost:8080/category/ebc40b65-7043-4692-a071-743b2f04e4a2 HTTP/1.1

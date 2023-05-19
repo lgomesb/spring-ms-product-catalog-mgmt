@@ -14,7 +14,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
             .components(new Components())
-            .info(new Info().title("Bookstore API"));
+            .info(new Info().title("Product Management API"));
     }
 
 }

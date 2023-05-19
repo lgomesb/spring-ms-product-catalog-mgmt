@@ -6,5 +6,5 @@ public interface DomainService<T> {
     T create(T record);
     T findById(UUID id);
     void update(T record);
-    void delete();
+    void delete(UUID id);
 }
