@@ -1,7 +1,7 @@
 package com.barbosa.ms.productmgmt.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +23,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductRecord create(ProductRecord record) {        
-        Category category = categoryRepository
-            .findById(record.idCategory())
-            .orElseThrow(() -> new RuntimeException("Entity Category not found."));
+        Category category = getCategoryById(record.idCategory());
             
         Product product = new Product();
         product.setCategory(category);
@@ -34,24 +32,40 @@ public class ProductServiceImpl implements ProductService {
         return new ProductRecord(productSaved.getId(),productSaved.getName(), category.getId());
     }
 
+    
     @Override
     public ProductRecord findById(UUID id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
-    }
-
-    @Override
-    public void update(ProductRecord record) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
-    }
-
-    @Override
-    public void delete(UUID id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        Product product = getProductById(id);
+        return new ProductRecord(product.getId(), product.getName(), product.getCategory().getId());
     }
 
     
-
+    @Override
+    public void update(ProductRecord record) {
+        Product product = getProductById(record.id());
+        product.setName(record.name());
+        product.setCategory(getCategoryById(record.idCategory()));
+        product.setModifieldOn(LocalDateTime.now());
+        product.setModifiedBy("999999");
+        repository.save(product);
+    }
+    
+    @Override
+    public void delete(UUID id) {
+        Product product = getProductById(id);
+        repository.delete(product);
+    }
+    
+    private Product getProductById(UUID id) {
+        return repository
+        .findById(id)
+        .orElseThrow(()-> new RuntimeException("Product not found by id: " + id.toString()));
+    }
+    
+    private Category getCategoryById(UUID uuid) {
+        return categoryRepository
+            .findById(uuid)
+            .orElseThrow(() -> new RuntimeException("Entity Category not found."));
+    }
+    
 }

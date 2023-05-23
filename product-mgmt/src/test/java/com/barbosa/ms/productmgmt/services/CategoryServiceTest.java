@@ -67,12 +67,12 @@ public class CategoryServiceTest {
         when.findCategoryById();
         when.callCategoryServiceFindById();
         when.saveCategoryEntity();
-        when.callCreateInCategorySerivce();
+        when.callCategorySerivceUpdate();
         then.shouldBeSuccessfulArgumentValidationByUpdate();        
     }
 
     @Test
-    public void delete() {
+    public void shouldSuccessWhenDelete() {
         given.categoryInicietedForSuccessfulReturn();
         when.findCategoryById();
         when.deleteCategoryEntity();
@@ -103,6 +103,10 @@ public class CategoryServiceTest {
         public void saveCategoryEntity() {
             when(repository.save(any(Category.class)))
             .thenReturn(category);
+        }
+
+        public void callCategorySerivceUpdate() {
+            service.update(categoryRecord);
         }
 
         public void callDelteInCategorySerivce() {
