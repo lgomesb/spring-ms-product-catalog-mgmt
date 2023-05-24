@@ -3,6 +3,7 @@ package com.barbosa.ms.productmgmt.services.impl;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
     
     private Category getCategoryById(UUID id) {
         return repository.findById(id)
-                  .orElseThrow(()-> new RuntimeException("Category not found by id: " + id.toString()));
+                  .orElseThrow(()-> new ObjectNotFoundException("Category", id));
     }
     
     

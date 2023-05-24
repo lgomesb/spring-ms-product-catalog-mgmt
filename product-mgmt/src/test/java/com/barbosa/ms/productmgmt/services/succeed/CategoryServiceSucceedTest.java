@@ -1,4 +1,4 @@
-package com.barbosa.ms.productmgmt.services;
+package com.barbosa.ms.productmgmt.services.succeed;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,7 +23,7 @@ import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.services.impl.CategoryServiceImpl;
 
 
-public class CategoryServiceTest {
+public class CategoryServiceSucceedTest {
 
     @InjectMocks
     private CategoryServiceImpl service;

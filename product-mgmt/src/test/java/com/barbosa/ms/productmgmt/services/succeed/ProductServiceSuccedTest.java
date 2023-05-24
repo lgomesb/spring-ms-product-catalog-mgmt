@@ -1,8 +1,7 @@
-package com.barbosa.ms.productmgmt.services;
+package com.barbosa.ms.productmgmt.services.succeed;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
@@ -26,7 +25,7 @@ import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 import com.barbosa.ms.productmgmt.services.impl.ProductServiceImpl;
 
-public class ProductServiceTest {
+public class ProductServiceSuccedTest {
     
     @InjectMocks
     private ProductServiceImpl service;
