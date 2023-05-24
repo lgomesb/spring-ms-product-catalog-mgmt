@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
@@ -47,7 +48,7 @@ public class CategoryServiceFailedTest {
         given.categoryInicietedForFailueReturn();
         given.categoryRecordInicietedForFailueReturn();
         when.saveCategoryEntity();
-        then.shouldBeFailueWhenCreateCategory(IllegalArgumentException.class);
+        then.shouldBeFailueWhenCreateCategory(DataIntegrityViolationException.class);
     }
 
     @Test
@@ -71,7 +72,7 @@ public class CategoryServiceFailedTest {
         given.categoryRecordInicietedForFailueReturn();
         when.findCategoryById();
         when.saveCategoryEntity();
-        then.shouldBeFailueWhenUpdateCategory(IllegalArgumentException.class);        
+        then.shouldBeFailueWhenUpdateCategory(DataIntegrityViolationException.class);        
     }
 
     @Test
@@ -100,11 +101,13 @@ public class CategoryServiceFailedTest {
     }
 
     class When {
-
-        public void saveCategoryEntity() {            
-            doThrow(new IllegalArgumentException("Error in insert category"))
-                .when(repository)
-                .save(any(Category.class));
+        
+        public CategoryRecord callCreateInCategorySerivce() {
+            return service.create(categoryRecord);
+        }
+        
+        public CategoryRecord callCategoryServiceFindById() {
+            return service.findById(given.creationIdOfCategory());
         }
 
         public void callCategorySerivceUpdate() {
@@ -115,26 +118,24 @@ public class CategoryServiceFailedTest {
             service.delete(given.creationIdOfCategory());
         }
 
-        public void deleteCategoryEntity() {
-            doNothing().when(repository).delete(any(Category.class));
-        }
-
-        public CategoryRecord callCategoryServiceFindById() {
-            return service.findById(given.creationIdOfCategory());
-        }
-
-        public void findCategoryByIdWithFail() {
-            doThrow(new ObjectNotFoundException("Category", given.creationIdOfCategory()))
-                .when(repository).findById(any(UUID.class));
-                
+        public void saveCategoryEntity() {            
+            doThrow(new DataIntegrityViolationException("Error inserting category"))
+                .when(repository)
+                .save(any(Category.class));
         }
 
         public void findCategoryById() {
             when(repository.findById(any(UUID.class))).thenReturn(Optional.of(category));
         }
 
-        public CategoryRecord callCreateInCategorySerivce() {
-            return service.create(categoryRecord);
+        public void deleteCategoryEntity() {
+            doNothing().when(repository).delete(any(Category.class));
+        }
+
+        public void findCategoryByIdWithFail() {
+            doThrow(new ObjectNotFoundException("Category", given.creationIdOfCategory()))
+                .when(repository).findById(any(UUID.class));
+                
         }
 
     }

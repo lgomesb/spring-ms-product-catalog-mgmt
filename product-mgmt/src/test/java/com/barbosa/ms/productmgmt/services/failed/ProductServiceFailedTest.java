@@ -1,22 +1,23 @@
 package com.barbosa.ms.productmgmt.services.failed;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import org.hibernate.ObjectNotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.entities.Product;
@@ -53,46 +54,41 @@ public class ProductServiceFailedTest {
     }
 
     @Test
-    public void shouldSuccessWhenCreate() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.productInicietedForSuccessfulReturn();
-        given.productRecordInicietedForSuccessfulReturn();
+    public void shouldFailWhenCreate() {
+        given.categoryInicietedForFailedReturn();
+        given.productInicietedForFailedReturn();
+        given.productRecordInicietedForFailedReturn();
         when.findCategoryById();
         when.saveProductEntity();
-        ProductRecord record = when.callCreateInCategorySerivce();
-        then.shouldBeSuccessfulValidationRules(record);
+        then.shouldBeFailedWhenCallCreateProduct();
     }
 
     @Test
-    public void shouldSuccessWhenFindById() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.productInicietedForSuccessfulReturn();
+    public void shouldFailWhenFindById() {
+        given.categoryInicietedForFailedReturn();
+        given.productInicietedForFailedReturn();
         when.findProductById();
-        ProductRecord record = when.callProductServiceFindById();
-        then.shouldBeSuccessfulValidationRules(record);
+        then.shouldBeFailedWhenCallProductFindById();
     }
 
     @Test
-    public void shouldSuccessWhenUpdate() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.productInicietedForSuccessfulReturn();
-        given.productRecordInicietedForSuccessfulReturn();
+    public void shouldFailWhenUpdate() {
+        given.categoryInicietedForFailedReturn();
+        given.productInicietedForFailedReturn();
+        given.productRecordInicietedForFailedReturn();
         when.findCategoryById();
         when.findProductById();
-        when.saveProductEntity();
-        when.callProductServiceUpdate();
-        then.shouldBeSuccessfulArgumentValidationUpdate();
+        then.shouldBeFailedWhenCallProductUpdate();
     }
 
     @Test
-    public void shouldSuccessWhenDelete() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.productInicietedForSuccessfulReturn();
-        given.productRecordInicietedForSuccessfulReturn();
+    public void shouldFailWhenDelete() {
+        given.categoryInicietedForFailedReturn();
+        given.productInicietedForFailedReturn();
+        given.productRecordInicietedForFailedReturn();
         when.findProductById();
         when.deleteProductEntity();
-        when.callProductServiceDelete();
-        then.shouldBeSuccessfulArgumentValidationDelete();
+        then.shouldBeFailedWhenCallProductDelete();
     }
 
     class Given {
@@ -101,22 +97,22 @@ public class ProductServiceFailedTest {
             return UUID.randomUUID();
         }
 
-        public void categoryInicietedForSuccessfulReturn() {
+        public void categoryInicietedForFailedReturn() {
             category = Category.builder()
                 .id(getUUID())
-                .name("Category-Test-Success")
+                .name("Category-Test-Fail")
                 .build();
         }
 
-        public void productInicietedForSuccessfulReturn() {
+        public void productInicietedForFailedReturn() {
             product = Product.builder()
                         .category(category)
-                        .name("Test-Product")
+                        .name(null)
                         .id(getUUID())
                         .build();
         }
 
-        public void productRecordInicietedForSuccessfulReturn() {
+        public void productRecordInicietedForFailedReturn() {
             productRecord = new ProductRecord(
                 product.getId(), 
                 product.getName(), 
@@ -128,7 +124,12 @@ public class ProductServiceFailedTest {
     class When {
 
         public void saveProductEntity() {
-            when(repository.save(any(Product.class))).thenReturn(product);
+            doThrow(new DataIntegrityViolationException("Error inserting product"))
+                .when(repository)
+                .save(any(Product.class));
+        }
+        public ProductRecord callCreateInProductSerivce() {
+            return service.create(productRecord);
         }
 
         public void callProductServiceDelete() {
@@ -148,11 +149,9 @@ public class ProductServiceFailedTest {
         }
 
         public void findProductById() {
-            when(repository.findById(any(UUID.class))).thenReturn(Optional.of(product));
-        }
-
-        public ProductRecord callCreateInCategorySerivce() {
-            return service.create(productRecord);
+            doThrow(new ObjectNotFoundException("Product", product.getId()))
+                .when(repository)
+                .findById(any(UUID.class));            
         }
 
         public void findCategoryById() {
@@ -163,26 +162,29 @@ public class ProductServiceFailedTest {
 
     class Then {
 
-        public void shouldBeSuccessfulValidationRules(ProductRecord record) {
-            assertNotNull(record);
-            assertNotNull(record.name());
-            assertEquals(record.name(), product.getName());
-            assertEquals(record.id(), product.getId());
-            assertEquals(record.idCategory(),product.getCategory().getId());
+        public void shouldBeFailedWhenCallCreateProduct() {
+            Assertions.assertThrows(DataIntegrityViolationException.class, () -> { 
+                when.callCreateInProductSerivce(); 
+            });
         }
 
-        public void shouldBeSuccessfulArgumentValidationUpdate() {
-            ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
-            verify(repository).save(productCaptor.capture());
-            assertNotNull(productCaptor.getValue());
-            assertNotNull(productCaptor.getValue().getName());
+        public void shouldBeFailedWhenCallProductFindById() {
+            assertThrows(ObjectNotFoundException.class, () -> { 
+                when.callProductServiceFindById();
+            });
+            
         }
 
-        public void shouldBeSuccessfulArgumentValidationDelete() {
-            ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
-            verify(repository).delete(productCaptor.capture());
-            assertNotNull(productCaptor.getValue());
-            assertNotNull(productCaptor.getValue().getName());
+        public void shouldBeFailedWhenCallProductUpdate() {
+            assertThrows(ObjectNotFoundException.class, () -> {
+                when.callProductServiceUpdate();
+            });
+        }
+
+        public void shouldBeFailedWhenCallProductDelete() {
+            assertThrows(ObjectNotFoundException.class, () -> {
+                when.callProductServiceDelete();
+            });
         }
 
     }
