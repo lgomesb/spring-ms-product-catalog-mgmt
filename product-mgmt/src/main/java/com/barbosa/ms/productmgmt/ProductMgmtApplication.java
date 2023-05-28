@@ -25,7 +25,7 @@ public class ProductMgmtApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-
+		System.out.println("::::::::::::::: NORMAL ::::::::::::::::::::");
 		try {
 			CategoryRecord category = categoriaService.create(new CategoryRecord(null, "Test-Category-01"));
 			ProductRecord product = productService.create(new ProductRecord(null, "Product-Test01", category.id()));
