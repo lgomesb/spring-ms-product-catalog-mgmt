@@ -59,7 +59,7 @@ public class CategoryRepositoryTest {
     @Test
     @Order(3)
     public void shouldWhenCallUpdate() {
-        String categoryNameUpdate = "Test-Create-Category";
+        String categoryNameUpdate = "Test-Update-Category";
         category = repository.save(category);
         Optional<Category> oCategory = repository.findById(category.getId());
         Category newCategory = oCategory.get();

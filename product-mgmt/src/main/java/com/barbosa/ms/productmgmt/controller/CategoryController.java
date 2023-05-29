@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.barbosa.ms.productmgmt.domain.dto.CategoryResponseDTO;
-import com.barbosa.ms.productmgmt.domain.dto.CreateCategoryDTO;
+import com.barbosa.ms.productmgmt.domain.dto.CategoryRequestDTO;
 import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
 import com.barbosa.ms.productmgmt.services.CategoryService;
 
@@ -33,7 +33,7 @@ public class CategoryController {
 
     @Operation(summary = "Create category", description = "Create a new category", tags = {"Category"})
     @PostMapping
-    public ResponseEntity<CategoryResponseDTO> create(@RequestBody CreateCategoryDTO dto) throws Exception {
+    public ResponseEntity<CategoryResponseDTO> create(@RequestBody CategoryRequestDTO dto) throws Exception {
 
         CategoryRecord record = service.create(new CategoryRecord(null, dto.getName()));
         
@@ -54,7 +54,7 @@ public class CategoryController {
 
     @Operation(summary = "Update category by Id", description = "Update category by id", tags = {"Category"})
     @PutMapping ("/{id}")
-    public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody CreateCategoryDTO dto) {
+    public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody CategoryRequestDTO dto) {
         service.update(new CategoryRecord(UUID.fromString(id), dto.getName()));
         return ResponseEntity.accepted().build();
     }
