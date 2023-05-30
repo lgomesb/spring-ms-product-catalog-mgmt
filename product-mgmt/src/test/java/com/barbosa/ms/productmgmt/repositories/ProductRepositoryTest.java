@@ -3,6 +3,8 @@ package com.barbosa.ms.productmgmt.repositories;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
@@ -38,13 +42,15 @@ public class ProductRepositoryTest {
         assertNotNull(repository);
     }
 
-    @Test
     @Order(1)
-    public void shouldWhenCallCreate() {
-        String productName = "Test-Create-Product";
-        product = repository.save(new Product(new Category("Category-Test"), productName, UUID.randomUUID()));
+    @ParameterizedTest
+    @CsvSource({"Test-Create-Product,Category-Test"})
+    public void shouldWhenCallCreate(String productName, String categoryName) {
+        product = repository.save(new Product(new Category(categoryName), productName, UUID.randomUUID()));
         assertNotNull(product, "Should return Product is not null");
         assertNotNull(product.getId());
+        assertNotNull(product.getName());
+        assertTrue(!product.getName().isBlank());
         assertEquals(productName, product.getName());
     }
 

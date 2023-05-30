@@ -32,11 +32,12 @@ public class CategoryRepositoryTest {
 
     private static Stream<Arguments> provideCategoryData() {        
         return Stream.of(
-          Arguments.of("Test-01"),
-          Arguments.of("Test-02")
+          Arguments.of("Category-Test-01"),
+          Arguments.of("Category-Test-02")
         );
     }
 
+    
     @Test 
     @Order(0)
     public void shouldSuccessfulInjectComponent() {
