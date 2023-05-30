@@ -3,10 +3,6 @@ package com.barbosa.ms.productmgmt.repositories;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -34,16 +30,6 @@ public class CategoryRepositoryTest {
     @Autowired
     private CategoryRepository repository;
 
-    private Category category;
-    private List<Category> categories = new ArrayList<>();
-
-    @ParameterizedTest
-    @MethodSource("provideCategoryData")
-    void categoryDataProvider( String name) {
-        System.out.println(":::::::::::::: Category: " + name );
-        assertTrue(true);
-    }
-
     private static Stream<Arguments> provideCategoryData() {        
         return Stream.of(
           Arguments.of("Test-01"),
@@ -61,51 +47,44 @@ public class CategoryRepositoryTest {
     @ParameterizedTest
     @MethodSource("provideCategoryData")
     public void shouldWhenCallCreate(String categoryName) {
-        category = repository.save(new Category(categoryName));
-        categories.add(category);
+        Category category = repository.save(new Category(categoryName));
         assertNotNull(category, "Should return Category is not null");
         assertNotNull(category.getId());
         assertEquals(categoryName, category.getName());        
     }
 
-    @Test
+
     @Order(2)
-    public void shouldWhenCallFindById() {
-        categories = repository.saveAll(categories);
-        Optional<Category> oCategory = repository
-            .findById(categories.stream()
-                .findAny()
-                .get()
-                .getId());
+    @ParameterizedTest
+    @MethodSource("provideCategoryData")
+    public void shouldWhenCallFindById(String categoryName) {
+        Category category = repository.save(new Category(categoryName));
+        Optional<Category> oCategory = repository.findById(category.getId());
         assertNotNull(oCategory.get(), "Should return Category is not null");
         assertNotNull(oCategory.get().getId(), "Should return Category ID is not null");
         assertNotNull(oCategory.get().getName(), "Should return Category NAME is not null");
     }
 
-    @Test
+  
     @Order(3)
-    public void shouldWhenCallUpdate() {
+    @ParameterizedTest
+    @MethodSource("provideCategoryData")
+    public void shouldWhenCallUpdate(String categoryName) {
         String categoryNameUpdate = "Test-Update-Category";
-        categories = repository.saveAll(categories);
-        Optional<Category> oCategory = repository
-            .findById(categories.stream()
-                .findAny()
-                .get()
-                .getId());
+        Category category = repository.save(new Category(categoryName));
+        Optional<Category> oCategory = repository.findById(category.getId());
         Category newCategory = oCategory.get();
         newCategory.setName(categoryNameUpdate);
         newCategory = repository.save(newCategory);
         assertEquals(categoryNameUpdate, newCategory.getName());
     }
-
-    @Test
+  
     @Order(4)
-    public void shouldWhenCallDelete() {
-        categories = repository.saveAll(categories);
-        Optional<Category> oCategory = repository.findById(categories.stream()
-            .findAny()
-            .get()
-            .getId());
+    @ParameterizedTest
+    @MethodSource("provideCategoryData")
+    public void shouldWhenCallDelete(String categoryName) {
+        Category category = repository.save(new Category(categoryName));
+        Optional<Category> oCategory = repository.findById(category.getId());
         repository.delete(oCategory.get());
         Optional<Category> findCategory = repository.findById(oCategory.get().getId());
         assertFalse(findCategory.isPresent());
