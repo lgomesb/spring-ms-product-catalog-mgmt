@@ -1,4 +1,4 @@
-package com.barbosa.ms.productmgmt.repositories;
+package com.barbosa.ms.productmgmt.repositories.success;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,12 +23,13 @@ import org.springframework.test.context.ContextConfiguration;
 import com.barbosa.ms.productmgmt.ProductMgmtApplicationTests;
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.entities.Product;
+import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 
 @DataJpaTest()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration(classes = ProductMgmtApplicationTests.class)
 @TestInstance(Lifecycle.PER_CLASS)
-public class ProductRepositoryTest {
+public class ProductRepositorySuccessTest {
     
     @Autowired
     private ProductRepository repository;

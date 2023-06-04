@@ -1,11 +1,15 @@
-package com.barbosa.ms.productmgmt.repositories;
+package com.barbosa.ms.productmgmt.repositories.failed;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
+import org.hibernate.ObjectNotFoundException;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -20,12 +24,15 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
 import com.barbosa.ms.productmgmt.ProductMgmtApplicationTests;
 import com.barbosa.ms.productmgmt.domain.entities.Category;
+import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
+
+import jakarta.validation.ConstraintViolationException;
 
 @DataJpaTest()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration(classes = ProductMgmtApplicationTests.class)
 @TestInstance(Lifecycle.PER_CLASS)
-public class CategoryRepositoryTest {
+public class CategoryRepositoryFailedTest {
 
     @Autowired
     private CategoryRepository repository;
@@ -48,10 +55,9 @@ public class CategoryRepositoryTest {
     @ParameterizedTest
     @MethodSource("provideCategoryData")
     public void shouldWhenCallCreate(String categoryName) {
-        Category category = repository.save(new Category(categoryName));
-        assertNotNull(category, "Should return Category is not null");
-        assertNotNull(category.getId());
-        assertEquals(categoryName, category.getName());        
+        assertThrows(ConstraintViolationException.class, () -> {
+            repository.saveAndFlush(new Category(null));
+        }, "Should return Error when Category not null");
     }
 
 
@@ -59,11 +65,12 @@ public class CategoryRepositoryTest {
     @ParameterizedTest
     @MethodSource("provideCategoryData")
     public void shouldWhenCallFindById(String categoryName) {
-        Category category = repository.save(new Category(categoryName));
-        Optional<Category> oCategory = repository.findById(category.getId());
-        assertNotNull(oCategory.get(), "Should return Category is not null");
-        assertNotNull(oCategory.get().getId(), "Should return Category ID is not null");
-        assertNotNull(oCategory.get().getName(), "Should return Category NAME is not null");
+        repository.save(new Category(categoryName));
+        Optional<Category> oCategory = repository.findById(UUID.randomUUID());
+        assertThrows( ObjectNotFoundException.class, () -> {
+            oCategory.orElseThrow(() ->
+                 new ObjectNotFoundException("Category", UUID.randomUUID()));
+        });
     }
 
   
