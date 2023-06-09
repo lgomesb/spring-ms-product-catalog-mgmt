@@ -3,11 +3,17 @@ package com.barbosa.ms.productmgmt.repositories.failed;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import org.hibernate.ObjectNotFoundException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -16,14 +22,19 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.barbosa.ms.productmgmt.ProductMgmtApplicationTests;
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.entities.Product;
+import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.repositories.ProductRepository;
+
+import jakarta.validation.ConstraintViolationException;
 
 @DataJpaTest()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -31,59 +42,70 @@ import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 @TestInstance(Lifecycle.PER_CLASS)
 public class ProductRepositoryFailedTest {
     
+    private Product product;
+
+    private Category category;
+    
     @Autowired
     private ProductRepository repository;
 
-    private Product product;
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     
 
-    @Test
-    @Order(0)
-    public void shouldSuccessfulInjectComponent() {
+    @BeforeEach
+    public void setup() {
+        assertNotNull(categoryRepository);
         assertNotNull(repository);
+        category = categoryRepository.saveAndFlush(new Category("Category-Test"));
+        System.out.println("#".repeat(80));
+        System.out.println("BeforeEach");
+        System.out.println("#".repeat(80));
     }
 
-    @Order(1)
+    @Order(0)
+    @DisplayName("Should throw error when to try to salve product name null")
     @ParameterizedTest
-    @CsvSource({"Test-Create-Product,Category-Test"})
-    public void shouldWhenCallCreate(String productName, String categoryName) {
-        product = repository.save(new Product(new Category(categoryName), productName, UUID.randomUUID()));
-        assertNotNull(product, "Should return Product is not null");
-        assertNotNull(product.getId());
-        assertNotNull(product.getName());
-        assertTrue(!product.getName().isBlank());
-        assertEquals(productName, product.getName());
+    @CsvSource({"''"})
+    public void shouldFailWhenCallCreate(String productName) {
+        assertThrows(ConstraintViolationException.class, () -> {
+            repository.saveAndFlush(new Product(category, productName, UUID.randomUUID()));
+        }, "Product name cannot be null, empty or blank");
     }
 
     @Test
+    @Order(1)
+    public void shouldFailWhenCallFindById() {
+        final Optional<Product> oProduct = repository.findById(UUID.randomUUID());
+        assertThrows( ObjectNotFoundException.class, () -> {
+            oProduct.orElseThrow(() ->
+                 new ObjectNotFoundException("Product", UUID.randomUUID()));
+        });
+    }
+
     @Order(2)
-    public void shouldWhenCallFindById() {
-        product = repository.save(product);
+    @ParameterizedTest
+    @ValueSource(strings = {"Product-Update-Test"})
+    public void shouldFailWhenCallUpdate(String productName) {
+        String productNameUpdate = "";
+        product = repository.save(new Product(category, productName, UUID.randomUUID()));
         Optional<Product> oProduct = repository.findById(product.getId());
-        assertNotNull(oProduct.get(), "Should return Product is not null");
-        assertNotNull(oProduct.get().getId(), "Should return Product ID is not null");
-        assertNotNull(oProduct.get().getName(), "Should return Product NAME is not null");
+        assertThrows(ConstraintViolationException.class, () -> {
+            Product newProduct = oProduct.get();
+            newProduct.setName(productNameUpdate);
+            repository.saveAndFlush(newProduct);
+        }, "Product name cannot be null, empty or blank");
     }
 
-    @Test
     @Order(3)
-    public void shouldWhenCallUpdate() {
-        String productNameUpdate = "Test-Update-Product";
-        product = repository.save(product);
-        Optional<Product> oProduct = repository.findById(product.getId());
-        Product newProduct = oProduct.get();
-        newProduct.setName(productNameUpdate);
-        newProduct = repository.save(newProduct);
-        assertEquals(productNameUpdate, newProduct.getName());
-    }
-
-    @Test
-    @Order(4)
-    public void shouldWhenCallDelete() {
-        product = repository.save(product);
-        Optional<Product> oProduct = repository.findById(product.getId());
-        repository.delete(oProduct.get());
-        Optional<Product> opProduct = repository.findById(product.getId());
-        assertFalse(opProduct.isPresent());
+    @ParameterizedTest
+    @ValueSource(strings = {"Product-Delete-Test"})
+    public void shouldFailWhenCallDelete(String productName) {
+        product = repository.save(new Product(category, productName, UUID.randomUUID()));
+        Optional<Product> opProduct = repository.findById(UUID.randomUUID());
+        assertThrows( InvalidDataAccessApiUsageException.class, () -> {
+            repository.delete(opProduct.orElse(any(Product.class)));
+        }, "Should return Error when Product not blank or empty");
     }
 }
