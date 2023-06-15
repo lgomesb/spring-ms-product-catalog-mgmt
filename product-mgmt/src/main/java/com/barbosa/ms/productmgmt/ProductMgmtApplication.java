@@ -1,17 +1,27 @@
 package com.barbosa.ms.productmgmt;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.MessageSource;
 
 import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
 import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
 import com.barbosa.ms.productmgmt.services.CategoryService;
 import com.barbosa.ms.productmgmt.services.ProductService;
 
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+
 @SpringBootApplication
+@RequiredArgsConstructor
 public class ProductMgmtApplication implements CommandLineRunner {
+
+	@Autowired
+	private final MessageSource messageSource;
 
 	@Autowired
 	private ProductService productService;
@@ -40,5 +50,12 @@ public class ProductMgmtApplication implements CommandLineRunner {
 		}
 
 	}
+
+	    @PostConstruct
+    public void postConstruct() {
+        System.out.println("Running Message Property Data");
+        System.out.println(messageSource.getMessage("field.name.required", null, Locale.getDefault()));
+        System.out.println("End Message Property Data");
+    }
 
 }

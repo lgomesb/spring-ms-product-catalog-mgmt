@@ -22,6 +22,7 @@ import com.barbosa.ms.productmgmt.services.CategoryService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @Tag(name = "Category", description = "Endpoints for category operations")
 @RestController
@@ -33,7 +34,7 @@ public class CategoryController {
 
     @Operation(summary = "Create category", description = "Create a new category", tags = {"Category"})
     @PostMapping
-    public ResponseEntity<CategoryResponseDTO> create(@RequestBody CategoryRequestDTO dto) throws Exception {
+    public ResponseEntity<CategoryResponseDTO> create(@RequestBody @Valid CategoryRequestDTO dto) throws Exception {
 
         CategoryRecord record = service.create(new CategoryRecord(null, dto.getName()));
         
