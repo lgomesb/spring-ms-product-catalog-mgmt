@@ -2,22 +2,27 @@ package com.barbosa.ms.productmgmt.exception;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class CustomException implements Serializable {
+public class StandardError implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private Long timestamp; 
 	private Integer status;
 	private String error; 
+
+	@JsonInclude(Include.NON_NULL)
 	private String messege; 
 	private String path;
 	
 	@Builder
-	public CustomException(Integer status, String error, String messege, String path) {
+	public StandardError(Integer status, String error, String messege, String path) {
 		super();
 		this.timestamp = System.currentTimeMillis();
 		this.status = status;
