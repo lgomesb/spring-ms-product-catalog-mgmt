@@ -1,7 +1,5 @@
 package com.barbosa.ms.productmgmt.repositories.failed;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -98,7 +96,7 @@ public class CategoryRepositoryFailedTest {
         Category category = new Category(UUID.randomUUID(), categoryName);
         Optional<Category> oCategory = repository.findById(category.getId());
         assertThrows( InvalidDataAccessApiUsageException.class, () -> {
-            repository.delete(oCategory.orElse(any(Category.class)));
+            repository.delete(oCategory.orElse(null));
         }, "Should return Error when Category not blank or empty");
     }
 }

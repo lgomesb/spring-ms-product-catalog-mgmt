@@ -1,17 +1,13 @@
 package com.barbosa.ms.productmgmt.repositories.failed;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import org.hibernate.ObjectNotFoundException;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -105,7 +101,7 @@ public class ProductRepositoryFailedTest {
         product = repository.save(new Product(category, productName, UUID.randomUUID()));
         Optional<Product> opProduct = repository.findById(UUID.randomUUID());
         assertThrows( InvalidDataAccessApiUsageException.class, () -> {
-            repository.delete(opProduct.orElse(any(Product.class)));
+            repository.delete(opProduct.orElse(null));
         }, "Should return Error when Product not blank or empty");
     }
 }
