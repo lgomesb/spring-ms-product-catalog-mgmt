@@ -1,7 +1,9 @@
 package com.barbosa.ms.productmgmt.services.impl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,17 @@ public class CategoryServiceImpl implements CategoryService {
     private Category getCategoryById(UUID id) {
         return repository.findById(id)
                   .orElseThrow(()-> new ObjectNotFoundException("Category", id));
+    }
+
+    @Override
+    public List<CategoryRecord> listAll() {
+        return repository.findAll()
+            .stream()
+            .map(entity -> CategoryRecord.builder()
+            .        id(entity.getId())
+                    .name(entity.getName())
+                    .build())
+            .collect(Collectors.toList());
     }
     
     

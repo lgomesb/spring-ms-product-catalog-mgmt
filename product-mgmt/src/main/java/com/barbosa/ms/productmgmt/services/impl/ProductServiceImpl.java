@@ -1,7 +1,9 @@
 package com.barbosa.ms.productmgmt.services.impl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,18 @@ public class ProductServiceImpl implements ProductService {
         Product product = getProductById(id);
         repository.delete(product);
     }
+
+        @Override
+    public List<ProductRecord> listAll() {
+        return repository.findAll()
+            .stream()
+            .map(entity -> ProductRecord.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .idCategory(entity.getId())
+                .build())
+            .collect(Collectors.toList());
+    }
     
     private Product getProductById(UUID id) {
         return repository
@@ -69,5 +83,5 @@ public class ProductServiceImpl implements ProductService {
             .findById(id)
             .orElseThrow(() -> new ObjectNotFoundException("Category", id) );
     }
-    
+   
 }

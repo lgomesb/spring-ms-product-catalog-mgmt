@@ -1,7 +1,9 @@
 package com.barbosa.ms.productmgmt.controller;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +67,16 @@ public class CategoryController {
     public ResponseEntity<Void> delete(@PathVariable("id") String id) {
         service.delete(UUID.fromString(id));
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "List all categories", description = "List all categories in the database", tags = {"Category"})
+    @GetMapping()
+    public ResponseEntity<List<CategoryResponseDTO>> listAll() {
+        List<CategoryResponseDTO> categories = service.listAll()
+            .stream()
+            .map(CategoryResponseDTO::create)
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(categories);
     }
 
 }
