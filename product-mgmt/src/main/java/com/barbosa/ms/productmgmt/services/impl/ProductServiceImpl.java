@@ -36,14 +36,12 @@ public class ProductServiceImpl implements ProductService {
         return new ProductRecord(productSaved.getId(),productSaved.getName(), category.getId());
     }
 
-    
     @Override
     public ProductRecord findById(UUID id) {
         Product product = getProductById(id);
         return new ProductRecord(product.getId(), product.getName(), product.getCategory().getId());
     }
 
-    
     @Override
     public void update(ProductRecord record) {
         Product product = getProductById(record.id());

@@ -1,7 +1,9 @@
 package com.barbosa.ms.productmgmt.controller;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.barbosa.ms.productmgmt.domain.dto.ProductResponseDTO;
+import com.barbosa.ms.productmgmt.domain.dto.CategoryResponseDTO;
 import com.barbosa.ms.productmgmt.domain.dto.ProductRequestDTO;
 import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
 import com.barbosa.ms.productmgmt.services.ProductService;
@@ -31,44 +34,54 @@ public class ProductController {
     @Autowired
     private ProductService service;
 
-    @Operation(summary = "Create product", description = "Create a new product", tags = {"Product"})
+    @Operation(summary = "Create product", description = "Create a new product", tags = { "Product" })
     @PostMapping
     public ResponseEntity<ProductResponseDTO> create(@RequestBody ProductRequestDTO dto) throws Exception {
 
         ProductRecord record = service.create(new ProductRecord(null, dto.getName(), dto.getUUIDCategory()));
-        
+
         URI location = ServletUriComponentsBuilder
-            .fromCurrentRequest()
-            .path("/{id}")
-            .buildAndExpand(record.id())
-            .toUri();
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(record.id())
+                .toUri();
         return ResponseEntity.created(location).build();
     }
 
-    @Operation(summary = "Find product by Id", description = "Find product by id", tags = {"Product"})
+    @Operation(summary = "Find product by Id", description = "Find product by id", tags = { "Product" })
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> findById(@PathVariable("id") String id) {
         ProductRecord record = service.findById(UUID.fromString(id));
         ProductResponseDTO response = ProductResponseDTO.builder()
-            .id(record.id().toString())
-            .name(record.name())
-            .idCategory(record.idCategory().toString())
-            .build();
+                .id(record.id().toString())
+                .name(record.name())
+                .idCategory(record.idCategory().toString())
+                .build();
         return ResponseEntity.ok().body(response);
     }
 
-    @Operation(summary = "Update product by Id", description = "Update product by id", tags = {"Product"})
-    @PutMapping ("/{id}")
+    @Operation(summary = "Update product by Id", description = "Update product by id", tags = { "Product" })
+    @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody ProductRequestDTO dto) {
         service.update(new ProductRecord(UUID.fromString(id), dto.getName(), dto.getUUIDCategory()));
         return ResponseEntity.accepted().build();
     }
 
-    @Operation(summary = "Delete product by Id", description = "Delete product by id", tags = {"Product"})
+    @Operation(summary = "Delete product by Id", description = "Delete product by id", tags = { "Product" })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") String id) {
         service.delete(UUID.fromString(id));
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "List all products", description = "List all product in the database", tags = {"Product"})
+    @GetMapping()
+    public ResponseEntity<List<ProductResponseDTO>> listAll() {
+        List<ProductResponseDTO> products = service.listAll()
+                .stream()
+                .map(ProductResponseDTO::create)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(products);
     }
 
 }

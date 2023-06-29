@@ -76,6 +76,7 @@ public class CategoryController {
             .stream()
             .map(CategoryResponseDTO::create)
             .collect(Collectors.toList());
+            
         return ResponseEntity.ok(categories);
     }
 
