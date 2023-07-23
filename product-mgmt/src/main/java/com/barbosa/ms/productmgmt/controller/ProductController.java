@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.barbosa.ms.productmgmt.domain.dto.ProductResponseDTO;
-import com.barbosa.ms.productmgmt.domain.dto.CategoryResponseDTO;
 import com.barbosa.ms.productmgmt.domain.dto.ProductRequestDTO;
 import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
 import com.barbosa.ms.productmgmt.services.ProductService;

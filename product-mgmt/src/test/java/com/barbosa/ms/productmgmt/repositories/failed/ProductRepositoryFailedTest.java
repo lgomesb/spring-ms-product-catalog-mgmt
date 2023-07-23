@@ -21,6 +21,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.barbosa.ms.productmgmt.ProductMgmtApplicationTests;
@@ -31,6 +32,7 @@ import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 
 import jakarta.validation.ConstraintViolationException;
 
+@ActiveProfiles(value = "test")
 @DataJpaTest()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration(classes = ProductMgmtApplicationTests.class)

@@ -15,5 +15,5 @@ spring:
         properties:
             hibernate:
                 format-sql: true
-    # flyway:
-    #     enabled: false
+    flyway:
+        enabled: false

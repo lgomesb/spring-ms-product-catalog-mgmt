@@ -18,6 +18,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.barbosa.ms.productmgmt.ProductMgmtApplicationTests;
@@ -25,6 +26,7 @@ import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.entities.Product;
 import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 
+@ActiveProfiles(value = "test")
 @DataJpaTest()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration(classes = ProductMgmtApplicationTests.class)

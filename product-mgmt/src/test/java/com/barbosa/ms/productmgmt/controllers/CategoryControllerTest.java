@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.barbosa.ms.productmgmt.ProductMgmtApplicationTests;
 import com.barbosa.ms.productmgmt.controller.CategoryController;
@@ -28,6 +29,7 @@ import io.restassured.response.Response;
 
 
 
+@ActiveProfiles(value = "test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(classes = {ProductMgmtApplicationTests.class}, webEnvironment = WebEnvironment.DEFINED_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
