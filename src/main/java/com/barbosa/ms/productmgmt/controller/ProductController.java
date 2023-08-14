@@ -1,11 +1,12 @@
 package com.barbosa.ms.productmgmt.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.List;
+import java.net.URLDecoder;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -73,14 +75,30 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "List all products", description = "List all product in the database", tags = {"Product"})
+    @Operation(summary = "List all products", description = "List all product in the database", tags = { "Product" })
     @GetMapping()
-    public ResponseEntity<List<ProductResponseDTO>> listAll() {
-        List<ProductResponseDTO> products = service.listAll()
-                .stream()
-                .map(ProductResponseDTO::create)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(products);
+    public ResponseEntity<Page<ProductResponseDTO>> listAll(
+            @RequestParam(value = "name", defaultValue = "") String name,           
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "linesPerPage", defaultValue = "5") Integer linesPerPage,
+            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
+
+        String nameDecoded = ProductController.decodeParam(name);
+
+        Page<ProductRecord> records = service.search(nameDecoded, page, linesPerPage, orderBy, direction);        
+        Page<ProductResponseDTO> products = records.map(ProductResponseDTO::create);
+;
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(products);
     }
+    
+    private static String decodeParam(String s) {
+		try {
+			return URLDecoder.decode(s, "UTF-8");
+		} 
+		catch (UnsupportedEncodingException e) {
+			return "";
+		}
+	}
 
 }

@@ -7,8 +7,12 @@ import java.util.stream.Collectors;
 
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.barbosa.ms.productmgmt.domain.dto.ProductResponseDTO;
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.entities.Product;
 import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
@@ -26,14 +30,14 @@ public class ProductServiceImpl implements ProductService {
     private CategoryRepository categoryRepository;
 
     @Override
-    public ProductRecord create(ProductRecord record) {        
+    public ProductRecord create(ProductRecord record) {
         Category category = getCategoryById(record.idCategory());
-            
+
         Product product = new Product();
         product.setCategory(category);
         product.setName(record.name());
         Product productSaved = repository.save(product);
-        return new ProductRecord(productSaved.getId(),productSaved.getName(), category.getId());
+        return new ProductRecord(productSaved.getId(), productSaved.getName(), category.getId());
     }
 
     @Override
@@ -51,35 +55,50 @@ public class ProductServiceImpl implements ProductService {
         product.setModifiedBy("999999");
         repository.save(product);
     }
-    
+
     @Override
     public void delete(UUID id) {
         Product product = getProductById(id);
         repository.delete(product);
     }
 
-        @Override
+    @Override
     public List<ProductRecord> listAll() {
         return repository.findAll()
-            .stream()
-            .map(entity -> ProductRecord.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .idCategory(entity.getId())
-                .build())
-            .collect(Collectors.toList());
+                .stream()
+                .map(entity -> ProductRecord.builder()
+                        .id(entity.getId())
+                        .name(entity.getName())
+                        .idCategory(entity.getId())
+                        .build())
+                .collect(Collectors.toList());
     }
-    
+
     private Product getProductById(UUID id) {
         return repository
-        .findById(id)
-        .orElseThrow(()-> new ObjectNotFoundException("Product", id));
+                .findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Product", id));
     }
-    
+
     private Category getCategoryById(UUID id) {
         return categoryRepository
-            .findById(id)
-            .orElseThrow(() -> new ObjectNotFoundException("Category", id) );
+                .findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Category", id));
     }
-   
+
+    @Override
+    public Page<ProductRecord> search(String name, Integer page, Integer linesPerPage, String orderBy,
+            String direction) {
+
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+        Page<Product> products = repository.findDistinctByNameContaining(name, pageRequest);
+
+        return products.map(entity -> ProductRecord.builder()
+                            .id(entity.getId())
+                            .name(entity.getName())
+                            .idCategory(entity.getId())
+                            .build());
+
+    }
+
 }
