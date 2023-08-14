@@ -96,7 +96,7 @@ public class ProductServiceImpl implements ProductService {
         return products.map(entity -> ProductRecord.builder()
                             .id(entity.getId())
                             .name(entity.getName())
-                            .idCategory(entity.getId())
+                            .idCategory(entity.getCategory().getId())
                             .build());
 
     }

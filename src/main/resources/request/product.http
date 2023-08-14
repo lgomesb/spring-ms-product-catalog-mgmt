@@ -1,0 +1,29 @@
+POST http://localhost:8080/product HTTP/1.1
+content-type: application/json
+
+{
+    "name": "sample", 
+    "idCategory": "cfd21034-2df0-42e0-9e09-81bfe5adae35"
+    
+}
+
+### Get all products
+GET http://localhost:8080/product HTTP/1.1
+
+
+### Find product by ID
+GET http://localhost:8080/product/4351d295-0921-4c46-9ca6-789e8b1c332d HTTP/1.1
+
+### Update product by ID
+PUT http://localhost:8080/product/4351d295-0921-4c46-9ca6-789e8b1c332d HTTP/1.1
+content-type: application/json
+
+{
+    "name": "sample2", 
+    "idCategory": "cfd21034-2df0-42e0-9e09-81bfe5adae35"
+    
+}
+
+### Delete product by ID
+DELETE http://localhost:8080/product/4351d295-0921-4c46-9ca6-789e8b1c332d HTTP/1.1
+

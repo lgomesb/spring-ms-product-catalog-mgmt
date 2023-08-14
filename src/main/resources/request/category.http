@@ -6,6 +6,22 @@ content-type: application/json
     
 }
 
-###
+### Get all categories
+GET http://localhost:8080/category HTTP/1.1
 
-GET http://localhost:8080/category/ebc40b65-7043-4692-a071-743b2f04e4a2 HTTP/1.1
+
+### Find category by ID
+GET http://localhost:8080/category/c56ba1fb-b98e-47eb-84be-42504436cca2 HTTP/1.1
+
+### Update category by ID
+PUT http://localhost:8080/category/c56ba1fb-b98e-47eb-84be-42504436cca2 HTTP/1.1
+content-type: application/json
+
+{
+    "name": "sample2"
+    
+}
+
+### Delete category by ID
+DELETE http://localhost:8080/category/c56ba1fb-b98e-47eb-84be-42504436cca2 HTTP/1.1
+
