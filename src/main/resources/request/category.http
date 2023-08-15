@@ -1,4 +1,4 @@
-POST http://localhost:8080/category HTTP/1.1
+POST http://localhost:8080/product-mgmt/category HTTP/1.1
 content-type: application/json
 
 {
@@ -7,14 +7,14 @@ content-type: application/json
 }
 
 ### Get all categories
-GET http://localhost:8080/category HTTP/1.1
+GET http://localhost:8080/product-mgmt/category HTTP/1.1
 
 
-### Find category by ID
-GET http://localhost:8080/category/c56ba1fb-b98e-47eb-84be-42504436cca2 HTTP/1.1
+### Find product-mgmt/category by ID
+GET http://localhost:8080/product-mgmt/category/c56ba1fb-b98e-47eb-84be-42504436cca2 HTTP/1.1
 
-### Update category by ID
-PUT http://localhost:8080/category/c56ba1fb-b98e-47eb-84be-42504436cca2 HTTP/1.1
+### Update product-mgmt/category by ID
+PUT http://localhost:8080/product-mgmt/category/c56ba1fb-b98e-47eb-84be-42504436cca2 HTTP/1.1
 content-type: application/json
 
 {
@@ -22,6 +22,9 @@ content-type: application/json
     
 }
 
-### Delete category by ID
-DELETE http://localhost:8080/category/c56ba1fb-b98e-47eb-84be-42504436cca2 HTTP/1.1
+### Delete product-mgmt/category by ID
+DELETE http://localhost:8080/product-mgmt/category/c56ba1fb-b98e-47eb-84be-42504436cca2 HTTP/1.1
+
+### Find product by category
+GET http://localhost:8080/product-mgmt/category/e672b32b-d309-40bf-ac3a-2394ab93e56d/products HTTP/1.1
 

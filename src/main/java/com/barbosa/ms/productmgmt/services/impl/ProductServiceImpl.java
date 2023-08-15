@@ -78,23 +78,40 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ObjectNotFoundException("Product", id));
     }
 
-    private Category getCategoryById(UUID id) {
-        return categoryRepository
-                .findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Category", id));
-    }
-
+    
     @Override
     public Page<ProductRecord> search(String name, PageRequest pageRequest) {
         
         Page<Product> products = repository.findDistinctByNameContaining(name, pageRequest);
-
+        
         return products.map(entity -> ProductRecord.builder()
-                            .id(entity.getId())
-                            .name(entity.getName())
-                            .idCategory(entity.getCategory().getId())
-                            .build());
-
+        .id(entity.getId())
+        .name(entity.getName())
+        .idCategory(entity.getCategory().getId())
+        .build());
+        
+    }
+    
+    
+    @Override
+    public Page<ProductRecord> findByCategory(UUID idCategory, PageRequest pageRequest) {
+        
+        Category category = this.getCategoryById(idCategory);
+        
+        Page<Product> products = repository.findDistinctByCategory(category, pageRequest);
+        
+        return products.map(entity -> ProductRecord.builder()
+        .id(entity.getId())
+        .name(entity.getName())
+        .idCategory(entity.getCategory().getId())
+        .build());
+        
+    }
+    
+    private Category getCategoryById(UUID id) {
+        return categoryRepository
+                .findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Category", id));
     }
 
 }

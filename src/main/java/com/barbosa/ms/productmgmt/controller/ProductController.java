@@ -77,10 +77,10 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "List all products", description = "List all product in the database", tags = { "Product" })
+    @Operation(summary = "Product list pageable", description = "List product in the database", tags = { "Product" })
     @GetMapping("product")
-    public ResponseEntity<Page<ProductResponseDTO>> listAll(
-            @RequestParam(value = "name", defaultValue = "") String name,           
+    public ResponseEntity<Page<ProductResponseDTO>> search(
+            @RequestParam(value = "name", defaultValue = "") String name,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "5") Integer linesPerPage,
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
@@ -88,19 +88,18 @@ public class ProductController {
 
         String nameDecoded = ProductController.decodeParam(name);
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-        Page<ProductRecord> records = service.search(nameDecoded, pageRequest);        
+        Page<ProductRecord> records = service.search(nameDecoded, pageRequest);
         Page<ProductResponseDTO> products = records.map(ProductResponseDTO::create);
-;
+
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(products);
     }
-    
+
     private static String decodeParam(String s) {
-		try {
-			return URLDecoder.decode(s, "UTF-8");
-		} 
-		catch (UnsupportedEncodingException e) {
-			return "";
-		}
-	}
+        try {
+            return URLDecoder.decode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return "";
+        }
+    }
 
 }
