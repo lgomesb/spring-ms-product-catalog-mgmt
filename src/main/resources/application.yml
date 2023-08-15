@@ -1,4 +1,9 @@
+server: 
+  servlet:
+    context-path: /product-mgmt
 spring:
+  application:
+    name: ms-product-catalog-mgmt
   profiles:
     active:
     - dev
