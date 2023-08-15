@@ -9,10 +9,8 @@ import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import com.barbosa.ms.productmgmt.domain.dto.ProductResponseDTO;
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.entities.Product;
 import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
@@ -87,10 +85,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductRecord> search(String name, Integer page, Integer linesPerPage, String orderBy,
-            String direction) {
-
-        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+    public Page<ProductRecord> search(String name, PageRequest pageRequest) {
+        
         Page<Product> products = repository.findDistinctByNameContaining(name, pageRequest);
 
         return products.map(entity -> ProductRecord.builder()

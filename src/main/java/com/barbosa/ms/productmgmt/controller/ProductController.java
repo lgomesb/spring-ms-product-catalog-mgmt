@@ -6,6 +6,8 @@ import java.net.URLDecoder;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,14 +31,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Product", description = "Endpoints for product operations")
 @RestController
-@RequestMapping(value = "/product")
+@RequestMapping(value = "/")
 public class ProductController {
 
     @Autowired
     private ProductService service;
 
     @Operation(summary = "Create product", description = "Create a new product", tags = { "Product" })
-    @PostMapping
+    @PostMapping(value = "product")
     public ResponseEntity<ProductResponseDTO> create(@RequestBody ProductRequestDTO dto) throws Exception {
 
         ProductRecord record = service.create(new ProductRecord(null, dto.getName(), dto.getUUIDCategory()));
@@ -50,7 +52,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Find product by Id", description = "Find product by id", tags = { "Product" })
-    @GetMapping("/{id}")
+    @GetMapping("product/{id}")
     public ResponseEntity<ProductResponseDTO> findById(@PathVariable("id") String id) {
         ProductRecord record = service.findById(UUID.fromString(id));
         ProductResponseDTO response = ProductResponseDTO.builder()
@@ -62,21 +64,21 @@ public class ProductController {
     }
 
     @Operation(summary = "Update product by Id", description = "Update product by id", tags = { "Product" })
-    @PutMapping("/{id}")
+    @PutMapping("product/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody ProductRequestDTO dto) {
         service.update(new ProductRecord(UUID.fromString(id), dto.getName(), dto.getUUIDCategory()));
         return ResponseEntity.accepted().build();
     }
 
     @Operation(summary = "Delete product by Id", description = "Delete product by id", tags = { "Product" })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("product/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") String id) {
         service.delete(UUID.fromString(id));
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "List all products", description = "List all product in the database", tags = { "Product" })
-    @GetMapping()
+    @GetMapping("product")
     public ResponseEntity<Page<ProductResponseDTO>> listAll(
             @RequestParam(value = "name", defaultValue = "") String name,           
             @RequestParam(value = "page", defaultValue = "0") Integer page,
@@ -85,8 +87,8 @@ public class ProductController {
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
         String nameDecoded = ProductController.decodeParam(name);
-
-        Page<ProductRecord> records = service.search(nameDecoded, page, linesPerPage, orderBy, direction);        
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+        Page<ProductRecord> records = service.search(nameDecoded, pageRequest);        
         Page<ProductResponseDTO> products = records.map(ProductResponseDTO::create);
 ;
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(products);
