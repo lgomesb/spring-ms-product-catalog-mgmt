@@ -34,9 +34,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     
     @Override
-    public void update(CategoryRecord record) {
-        Category category = this.getCategoryById(record.id());
-        category.setName(record.name());
+    public void update(CategoryRecord categoryRecord) {
+        Category category = this.getCategoryById(categoryRecord.id());
+        category.setName(categoryRecord.name());
         category.setModifieldOn(LocalDateTime.now());
         category.setModifiedBy("99999");
         repository.save(category);      

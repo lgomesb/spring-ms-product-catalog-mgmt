@@ -1,14 +1,12 @@
 package com.barbosa.ms.productmgmt.services.succeed;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,6 +78,14 @@ public class CategoryServiceSucceedTest {
         then.shouldBeSuccessfulArgumentValidationByDelete();    
     }
 
+    @Test
+    public void shouldSuccessWhenListAll() {
+        given.categoryInicietedForSuccessfulReturn();
+        when.findAllCategories();
+        List<CategoryRecord>  categoryRecords = when.callListAllInCategoryService();
+        then.shouldBeSuccessfulArgumentValidationByListAll(categoryRecords);
+    }
+
     class Given {
 
         public UUID creationIdOfCategory() {
@@ -129,6 +135,13 @@ public class CategoryServiceSucceedTest {
             return service.create(categoryRecord);
         }
 
+        public void findAllCategories() {
+            when(repository.findAll()).thenReturn(Collections.singletonList(category));
+        }
+
+        public List<CategoryRecord> callListAllInCategoryService() {
+            return service.listAll();
+        }
     }
     
     class Then {
@@ -155,5 +168,9 @@ public class CategoryServiceSucceedTest {
             assertEquals(categoryCaptor.getValue().getName(),category.getName());
         }
 
+        public void shouldBeSuccessfulArgumentValidationByListAll(List<CategoryRecord> categoryRecords) {
+            assertNotNull(categoryRecords);
+            assertFalse(categoryRecords.isEmpty());
+        }
     }
 }
