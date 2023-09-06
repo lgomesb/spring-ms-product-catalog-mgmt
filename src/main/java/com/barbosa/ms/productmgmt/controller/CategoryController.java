@@ -62,8 +62,8 @@ public class CategoryController {
     @Operation(summary = "Find category by Id", description = "Find category by id", tags = { "Category" })
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> findById(@PathVariable("id") String id) {
-        CategoryRecord record = service.findById(UUID.fromString(id));
-        return ResponseEntity.ok().body(new CategoryResponseDTO(record.id(), record.name()));
+        CategoryRecord categoryRecord = service.findById(UUID.fromString(id));
+        return ResponseEntity.ok().body(new CategoryResponseDTO(categoryRecord.id(), categoryRecord.name()));
     }
 
     @Operation(summary = "Update category by Id", description = "Update category by id", tags = { "Category" })
@@ -103,10 +103,10 @@ public class CategoryController {
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-        Page<ProductRecord> records = productService.findByCategory(UUID.fromString(id), pageRequest);
-        Page<ProductResponseDTO> products = records.map(ProductResponseDTO::create);
+        Page<ProductRecord> productRecords = productService.findByCategory(UUID.fromString(id), pageRequest);
 
-        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(products);
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                        .body(productRecords.map(ProductResponseDTO::create));
     }
 
 }

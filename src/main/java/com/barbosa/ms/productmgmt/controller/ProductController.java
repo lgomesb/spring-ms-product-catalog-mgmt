@@ -24,9 +24,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.barbosa.ms.productmgmt.domain.dto.ProductResponseDTO;
 import com.barbosa.ms.productmgmt.domain.dto.ProductRequestDTO;
 import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
+import com.barbosa.ms.productmgmt.exception.StandardError;
 import com.barbosa.ms.productmgmt.services.ProductService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Product", description = "Endpoints for product operations")
@@ -38,15 +43,25 @@ public class ProductController {
     private ProductService service;
 
     @Operation(summary = "Create product", description = "Create a new product", tags = { "Product" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Product created successful.", content = {
+                    @Content(schema = @Schema(implementation = ProductResponseDTO.class)) } ),
+            @ApiResponse(responseCode = "404", description = "Product not found.", content = {
+                    @Content(schema = @Schema(implementation = StandardError.class)) } ),
+            @ApiResponse(responseCode = "422", description = "Validation error.", content = {
+                    @Content(schema = @Schema(implementation = StandardError.class)) } ),
+            @ApiResponse(responseCode = "500", description = "Internal server error.", content = {
+                    @Content(schema = @Schema(implementation = StandardError.class)) } )
+    })
     @PostMapping(value = "product")
     public ResponseEntity<ProductResponseDTO> create(@RequestBody ProductRequestDTO dto) throws Exception {
 
-        ProductRecord record = service.create(new ProductRecord(null, dto.getName(), dto.getUUIDCategory()));
+        ProductRecord productRecord = service.create(new ProductRecord(null, dto.getName(), dto.getUUIDCategory()));
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(record.id())
+                .buildAndExpand(productRecord.id())
                 .toUri();
         return ResponseEntity.created(location).build();
     }
@@ -54,11 +69,11 @@ public class ProductController {
     @Operation(summary = "Find product by Id", description = "Find product by id", tags = { "Product" })
     @GetMapping("product/{id}")
     public ResponseEntity<ProductResponseDTO> findById(@PathVariable("id") String id) {
-        ProductRecord record = service.findById(UUID.fromString(id));
+        ProductRecord productRecord = service.findById(UUID.fromString(id));
         ProductResponseDTO response = ProductResponseDTO.builder()
-                .id(record.id().toString())
-                .name(record.name())
-                .idCategory(record.idCategory().toString())
+                .id(productRecord.id().toString())
+                .name(productRecord.name())
+                .idCategory(productRecord.idCategory().toString())
                 .build();
         return ResponseEntity.ok().body(response);
     }
