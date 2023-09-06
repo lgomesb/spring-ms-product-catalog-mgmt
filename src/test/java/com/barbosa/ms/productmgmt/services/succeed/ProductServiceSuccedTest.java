@@ -1,14 +1,13 @@
 package com.barbosa.ms.productmgmt.services.succeed;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +23,10 @@ import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
 import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 import com.barbosa.ms.productmgmt.services.impl.ProductServiceImpl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 public class ProductServiceSuccedTest {
     
@@ -39,9 +42,9 @@ public class ProductServiceSuccedTest {
     @Mock
     private ModelMapper modelMapper;
 
-    private Given given = new Given();
-    private When when = new When();
-    private Then then = new Then();
+    private final Given given = new Given();
+    private final When when = new When();
+    private final Then then = new Then();
     private Product product;
     private Category category;
     private ProductRecord productRecord;
@@ -93,6 +96,35 @@ public class ProductServiceSuccedTest {
         when.deleteProductEntity();
         when.callProductServiceDelete();
         then.shouldBeSuccessfulArgumentValidationDelete();
+    }
+
+    @Test
+    void shouldSuccessWhenListAll() {
+        given.categoryInicietedForSuccessfulReturn();
+        given.productInicietedForSuccessfulReturn();
+        when.findAllProducts();
+        List<ProductRecord> records = when.callProductServiceListAll();
+        then.shouldBeSuccessfulValidationFindAllProducts(records);
+    }
+
+    @Test
+    void shouldSuccessWhenSearchProduct() {
+        given.categoryInicietedForSuccessfulReturn();
+        given.productInicietedForSuccessfulReturn();
+        when.searchProduct();
+        Page<ProductRecord> productRecords = when.callProductServiceSearch();
+        then.shouldBeSuccessfulValidationSearchProducts(productRecords);
+    }
+
+    @Test
+    void shouldSuccessWhenFindProductByCategory() {
+        given.categoryInicietedForSuccessfulReturn();
+        given.productInicietedForSuccessfulReturn();
+        when.findCategoryById();
+        when.findDistinctByCategory();
+        Page<ProductRecord> productRecords = when.callFindProductByCategory();
+        then.shouldBeSuccessfulValidationFindProductByCategory(productRecords);
+
     }
 
     class Given {
@@ -159,6 +191,31 @@ public class ProductServiceSuccedTest {
             when(categoryRepository.findById(any(UUID.class))).thenReturn(Optional.of(category));
         }
 
+        public void findAllProducts() {
+            when(repository.findAll()).thenReturn(Collections.singletonList(product));
+        }
+
+        public List<ProductRecord> callProductServiceListAll() {
+            return service.listAll();
+        }
+
+        public void searchProduct() {
+            when(repository.findDistinctByNameContaining(anyString(), any(PageRequest.class)))
+                    .thenReturn(new PageImpl<Product>(Collections.singletonList(product)));
+        }
+
+        public Page<ProductRecord> callProductServiceSearch() {
+            return service.search(product.getName(), PageRequest.of(1, 10));
+        }
+
+        public void findDistinctByCategory() {
+            when(repository.findDistinctByCategory(any(Category.class), any(PageRequest.class)))
+                    .thenReturn(new PageImpl<Product>(Collections.singletonList(product)));
+        }
+
+        public Page<ProductRecord> callFindProductByCategory() {
+            return service.findByCategory(category.getId(), PageRequest.of(1, 10));
+        }
     }
 
     class Then {
@@ -185,6 +242,18 @@ public class ProductServiceSuccedTest {
             assertNotNull(productCaptor.getValue().getName());
         }
 
+        public void shouldBeSuccessfulValidationFindAllProducts(List<ProductRecord> records) {
+            assertNotNull(records);
+            assertFalse(records.isEmpty());
+        }
+
+        public void shouldBeSuccessfulValidationSearchProducts(Page<ProductRecord> productPage) {
+            assertNotNull(productPage);
+        }
+
+        public void shouldBeSuccessfulValidationFindProductByCategory(Page<ProductRecord> productRecords) {
+            assertNotNull(productRecords);
+        }
     }
 
 

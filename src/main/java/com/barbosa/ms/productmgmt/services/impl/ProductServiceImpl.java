@@ -72,42 +72,37 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
+
+    @Override
+    public Page<ProductRecord> search(String name, PageRequest pageRequest) {
+
+        Page<Product> products = repository.findDistinctByNameContaining(name, pageRequest);
+
+        return products.map(entity -> ProductRecord.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .idCategory(entity.getCategory().getId())
+                .build());
+
+    }
+
+    @Override
+    public Page<ProductRecord> findByCategory(UUID idCategory, PageRequest pageRequest) {
+        Category category = this.getCategoryById(idCategory);
+        Page<Product> products = repository.findDistinctByCategory(category, pageRequest);
+        return products.map(entity -> ProductRecord.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .idCategory(entity.getCategory().getId())
+                .build());
+    }
+
     private Product getProductById(UUID id) {
         return repository
                 .findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Product", id));
     }
 
-    
-    @Override
-    public Page<ProductRecord> search(String name, PageRequest pageRequest) {
-        
-        Page<Product> products = repository.findDistinctByNameContaining(name, pageRequest);
-        
-        return products.map(entity -> ProductRecord.builder()
-        .id(entity.getId())
-        .name(entity.getName())
-        .idCategory(entity.getCategory().getId())
-        .build());
-        
-    }
-    
-    
-    @Override
-    public Page<ProductRecord> findByCategory(UUID idCategory, PageRequest pageRequest) {
-        
-        Category category = this.getCategoryById(idCategory);
-        
-        Page<Product> products = repository.findDistinctByCategory(category, pageRequest);
-        
-        return products.map(entity -> ProductRecord.builder()
-        .id(entity.getId())
-        .name(entity.getName())
-        .idCategory(entity.getCategory().getId())
-        .build());
-        
-    }
-    
     private Category getCategoryById(UUID id) {
         return categoryRepository
                 .findById(id)
