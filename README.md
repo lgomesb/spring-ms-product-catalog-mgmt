@@ -41,72 +41,66 @@ flowchart LR
 
 classDiagram
 
-    namespace domain {
-        class Category {
-            - UUID id
-            - String name
-            - Boolean status
-            - Datetime createdOn
-            - String createBy
-            - Datetime modifiedOn
-            - String modifiedBy
-            + Category build()
+    class Category {
+        - UUID id
+        - String name
+        - Boolean status
+        - Datetime createdOn
+        - String createBy
+        - Datetime modifiedOn
+        - String modifiedBy
+        + Category build()
+    }
+
+    class Product {
+        - UUID id
+        - String name
+        - Boolean status
+        - Datetime createdOn
+        - String createBy
+        - Datetime modifiedOn
+        - String modifiedBy
+        - Category category
+        + Product build()
+    }    
+
+    class CategoryRepository {
+        <<inteface>>
+
+    }
+
+    class ProductRepository {
+        <<inteface>>
+    }
+
+    class JpaRepositories {
+        <<inteface>>
+        + Object save()
+        + Object delete()
+        + Object findById()
+        + Object findAll()
+    }
+        
+    class ProductController {
+        - ProductService service
+        + ResponseEntity createProduct(productDTO)
+        + ResponseEntity updateProduct(idProduct, productDTO)
+        + ResponseEntity deleteProduct(idProduct)
+        + ResponseEntity findProduct()
+    }
+
+    class CategoryController {
+        - CategoryService categoryService
+        + ResponseEntity createCategory(categoryDTO)
+        + ResponseEntity updateCategory(idCategory, categoryDTO)
+        + ResponseEntity deleteCategory(idCategory)
+        + ResponseEntity findCategory()
         }
 
-        class Product {
-            - UUID id
-            - String name
-            - Boolean status
-            - Datetime createdOn
-            - String createBy
-            - Datetime modifiedOn
-            - String modifiedBy
-            - Category category
-            + Product build()
-        }
-    }
     
-    namespace repositories {
-        class CategoryRepository {
-            <<inteface>>
 
-        }
-
-        class ProductRepository {
-            <<inteface>>
-        }
-
-        class JpaRepositories {
-            <<inteface>>
-            + Object save()
-            + Object delete()
-            + Object findById()
-            + Object findAll()
-        }
-    }
-    namespace controller {
-        class ProductController {
-            - ProductService service
-            + ResponseEntity createProduct(productDTO)
-            + ResponseEntity updateProduct(idProduct, productDTO)
-            + ResponseEntity deleteProduct(idProduct)
-            + ResponseEntity findProduct()
-        }
-
-        class CategoryController {
-            - CategoryService categoryService
-            + ResponseEntity createCategory(categoryDTO)
-            + ResponseEntity updateCategory(idCategory, categoryDTO)
-            + ResponseEntity deleteCategory(idCategory)
-            + ResponseEntity findCategory()
-        }
-
-    }
-    
-    namespace services {
-        class CategoryService
-        class ProductService
-    }
+    class CategoryService
+    class ProductService
     Product o--> Category
     CategoryRepository -- Category
     ProductRepository  -- Product
