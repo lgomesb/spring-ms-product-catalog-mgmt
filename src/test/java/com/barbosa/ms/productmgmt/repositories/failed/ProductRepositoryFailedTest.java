@@ -37,7 +37,7 @@ import jakarta.validation.ConstraintViolationException;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration(classes = ProductMgmtApplicationTests.class)
 @TestInstance(Lifecycle.PER_CLASS)
-public class ProductRepositoryFailedTest {
+class ProductRepositoryFailedTest {
     
     private Product product;
 
@@ -52,7 +52,7 @@ public class ProductRepositoryFailedTest {
     
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         assertNotNull(categoryRepository);
         assertNotNull(repository);
         category = categoryRepository.saveAndFlush(new Category("Category-Test"));
@@ -65,7 +65,7 @@ public class ProductRepositoryFailedTest {
     @DisplayName("Should throw error when to try to salve product name null")
     @ParameterizedTest
     @CsvSource({"''"})
-    public void shouldFailWhenCallCreate(String productName) {
+    void shouldFailWhenCallCreate(String productName) {
         assertThrows(ConstraintViolationException.class, () -> {
             repository.saveAndFlush(new Product(category, productName, UUID.randomUUID()));
         }, "Product name cannot be null, empty or blank");
@@ -73,7 +73,7 @@ public class ProductRepositoryFailedTest {
 
     @Test
     @Order(1)
-    public void shouldFailWhenCallFindById() {
+    void shouldFailWhenCallFindById() {
         final Optional<Product> oProduct = repository.findById(UUID.randomUUID());
         assertThrows( ObjectNotFoundException.class, () -> {
             oProduct.orElseThrow(() ->
@@ -84,7 +84,7 @@ public class ProductRepositoryFailedTest {
     @Order(2)
     @ParameterizedTest
     @ValueSource(strings = {"Product-Update-Test"})
-    public void shouldFailWhenCallUpdate(String productName) {
+    void shouldFailWhenCallUpdate(String productName) {
         String productNameUpdate = "";
         product = repository.save(new Product(category, productName, UUID.randomUUID()));
         Optional<Product> oProduct = repository.findById(product.getId());
@@ -98,7 +98,7 @@ public class ProductRepositoryFailedTest {
     @Order(3)
     @ParameterizedTest
     @ValueSource(strings = {"Product-Delete-Test"})
-    public void shouldFailWhenCallDelete(String productName) {
+    void shouldFailWhenCallDelete(String productName) {
         product = repository.save(new Product(category, productName, UUID.randomUUID()));
         Optional<Product> opProduct = repository.findById(UUID.randomUUID());
         assertThrows( InvalidDataAccessApiUsageException.class, () -> {

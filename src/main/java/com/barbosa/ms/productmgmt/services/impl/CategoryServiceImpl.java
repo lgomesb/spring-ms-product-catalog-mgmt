@@ -1,18 +1,16 @@
 package com.barbosa.ms.productmgmt.services.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.hibernate.ObjectNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
 import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.services.CategoryService;
+import org.hibernate.ObjectNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -21,8 +19,8 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository repository;
 
     @Override
-    public CategoryRecord create(CategoryRecord record) {
-        Category category = repository.save(new Category(record.name()) );
+    public CategoryRecord create(CategoryRecord recordObject) {
+        Category category = repository.save(new Category(recordObject.name()) );
         return new CategoryRecord(category.getId(), category.getName());
     }
 
@@ -34,9 +32,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     
     @Override
-    public void update(CategoryRecord categoryRecord) {
-        Category category = this.getCategoryById(categoryRecord.id());
-        category.setName(categoryRecord.name());
+    public void update(CategoryRecord recordObject) {
+        Category category = this.getCategoryById(recordObject.id());
+        category.setName(recordObject.name());
         category.setModifieldOn(LocalDateTime.now());
         category.setModifiedBy("99999");
         repository.save(category);      
@@ -59,10 +57,10 @@ public class CategoryServiceImpl implements CategoryService {
         return repository.findAll()
             .stream()
             .map(entity -> CategoryRecord.builder()
-            .        id(entity.getId())
+                    .id(entity.getId())
                     .name(entity.getName())
                     .build())
-            .collect(Collectors.toList());
+            .toList();
     }
     
     

@@ -23,7 +23,7 @@ import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.services.impl.CategoryServiceImpl;
 
 
-public class CategoryServiceFailedTest {
+class CategoryServiceFailedTest {
 
     @InjectMocks
     private CategoryServiceImpl service;
@@ -44,7 +44,7 @@ public class CategoryServiceFailedTest {
     }
 
     @Test
-    public void shouldFailWhenCreate() {
+    void shouldFailWhenCreate() {
         given.categoryInicietedForFailueReturn();
         given.categoryRecordInicietedForFailueReturn();
         when.saveCategoryEntity();
@@ -52,14 +52,14 @@ public class CategoryServiceFailedTest {
     }
 
     @Test
-    public void shouldFailWhenFindById() {
+    void shouldFailWhenFindById() {
         given.categoryInicietedForFailueReturn();
         when.findCategoryByIdWithFail();        
         then.shouldBeFailueWhenFindCategoryById(ObjectNotFoundException.class);
     }
 
     @Test
-    public void shouldFailWhenUpdateWithIdNonExistent() {
+    void shouldFailWhenUpdateWithIdNonExistent() {
         given.categoryInicietedForFailueReturn();
         given.categoryRecordInicietedForFailueReturn();
         when.findCategoryByIdWithFail();        
@@ -67,7 +67,7 @@ public class CategoryServiceFailedTest {
     }
 
     @Test
-    public void shouldFailWhenUpdateWithInvalidArgument() {
+    void shouldFailWhenUpdateWithInvalidArgument() {
         given.categoryInicietedForFailueReturn();
         given.categoryRecordInicietedForFailueReturn();
         when.findCategoryById();
@@ -76,7 +76,7 @@ public class CategoryServiceFailedTest {
     }
 
     @Test
-    public void shouldFailWhenDelete() {
+    void shouldFailWhenDelete() {
         given.categoryInicietedForFailueReturn();
         when.findCategoryByIdWithFail();
         then.shouldBeFailueWhenDeleteCategory(ObjectNotFoundException.class);     
@@ -88,14 +88,14 @@ public class CategoryServiceFailedTest {
             return UUID.randomUUID();
         }
 
-        public void categoryInicietedForFailueReturn() {
+        void categoryInicietedForFailueReturn() {
            category = Category.builder()
                         .id(creationIdOfCategory())
                         .name(null)
                         .build();
         }
 
-        public void categoryRecordInicietedForFailueReturn () {
+        void categoryRecordInicietedForFailueReturn () {
             categoryRecord = new CategoryRecord(category.getId(), null);
         }
     }
@@ -110,29 +110,29 @@ public class CategoryServiceFailedTest {
             return service.findById(given.creationIdOfCategory());
         }
 
-        public void callCategorySerivceUpdate() {
+        void callCategorySerivceUpdate() {
             service.update(categoryRecord);
         }
 
-        public void callDelteInCategorySerivce() {
+        void callDelteInCategorySerivce() {
             service.delete(given.creationIdOfCategory());
         }
 
-        public void saveCategoryEntity() {            
+        void saveCategoryEntity() {            
             doThrow(new DataIntegrityViolationException("Error inserting category"))
                 .when(repository)
                 .save(any(Category.class));
         }
 
-        public void findCategoryById() {
+        void findCategoryById() {
             when(repository.findById(any(UUID.class))).thenReturn(Optional.of(category));
         }
 
-        public void deleteCategoryEntity() {
+        void deleteCategoryEntity() {
             doNothing().when(repository).delete(any(Category.class));
         }
 
-        public void findCategoryByIdWithFail() {
+        void findCategoryByIdWithFail() {
             doThrow(new ObjectNotFoundException("Category", given.creationIdOfCategory()))
                 .when(repository).findById(any(UUID.class));
                 

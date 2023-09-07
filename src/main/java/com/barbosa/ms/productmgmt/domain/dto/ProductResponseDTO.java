@@ -22,11 +22,11 @@ public class ProductResponseDTO extends ResponseDTO {
         this.idCategory = idCategory;
     }
 
-    public static ProductResponseDTO create(ProductRecord record) {
+    public static ProductResponseDTO create(ProductRecord productRecord) {
         return ProductResponseDTO.builder()
-            .id(record.id().toString())
-            .name(record.name())
-            .idCategory(record.idCategory().toString())
+            .id(productRecord.id().toString())
+            .name(productRecord.name())
+            .idCategory(productRecord.idCategory().toString())
             .build();
     }
 }

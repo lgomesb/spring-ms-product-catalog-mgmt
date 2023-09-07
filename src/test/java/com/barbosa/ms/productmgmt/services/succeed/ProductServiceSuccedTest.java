@@ -28,7 +28,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-public class ProductServiceSuccedTest {
+class ProductServiceSuccedTest {
     
     @InjectMocks
     private ProductServiceImpl service;
@@ -56,7 +56,7 @@ public class ProductServiceSuccedTest {
     }
 
     @Test
-    public void shouldSuccessWhenCreate() {
+    void shouldSuccessWhenCreate() {
         given.categoryInicietedForSuccessfulReturn();
         given.productInicietedForSuccessfulReturn();
         given.productRecordInicietedForSuccessfulReturn();
@@ -67,7 +67,7 @@ public class ProductServiceSuccedTest {
     }
 
     @Test
-    public void shouldSuccessWhenFindById() {
+    void shouldSuccessWhenFindById() {
         given.categoryInicietedForSuccessfulReturn();
         given.productInicietedForSuccessfulReturn();
         when.findProductById();
@@ -76,7 +76,7 @@ public class ProductServiceSuccedTest {
     }
 
     @Test
-    public void shouldSuccessWhenUpdate() {
+    void shouldSuccessWhenUpdate() {
         given.categoryInicietedForSuccessfulReturn();
         given.productInicietedForSuccessfulReturn();
         given.productRecordInicietedForSuccessfulReturn();
@@ -88,7 +88,7 @@ public class ProductServiceSuccedTest {
     }
 
     @Test
-    public void shouldSuccessWhenDelete() {
+    void shouldSuccessWhenDelete() {
         given.categoryInicietedForSuccessfulReturn();
         given.productInicietedForSuccessfulReturn();
         given.productRecordInicietedForSuccessfulReturn();
@@ -133,14 +133,14 @@ public class ProductServiceSuccedTest {
             return UUID.randomUUID();
         }
 
-        public void categoryInicietedForSuccessfulReturn() {
+        void categoryInicietedForSuccessfulReturn() {
             category = Category.builder()
                 .id(getUUID())
                 .name("Category-Test-Success")
                 .build();
         }
 
-        public void productInicietedForSuccessfulReturn() {
+        void productInicietedForSuccessfulReturn() {
             product = Product.builder()
                         .category(category)
                         .name("Test-Product")
@@ -148,7 +148,7 @@ public class ProductServiceSuccedTest {
                         .build();
         }
 
-        public void productRecordInicietedForSuccessfulReturn() {
+        void productRecordInicietedForSuccessfulReturn() {
             productRecord = new ProductRecord(
                 product.getId(), 
                 product.getName(), 
@@ -159,19 +159,19 @@ public class ProductServiceSuccedTest {
 
     class When {
 
-        public void saveProductEntity() {
+        void saveProductEntity() {
             when(repository.save(any(Product.class))).thenReturn(product);
         }
 
-        public void callProductServiceDelete() {
+        void callProductServiceDelete() {
             service.delete(product.getId());
         }
 
-        public void deleteProductEntity() {
+        void deleteProductEntity() {
             doNothing().when(repository).delete(any(Product.class));
         }
 
-        public void callProductServiceUpdate() {
+        void callProductServiceUpdate() {
             service.update(productRecord);
         }
 
@@ -179,7 +179,7 @@ public class ProductServiceSuccedTest {
             return service.findById(product.getId());
         }
 
-        public void findProductById() {
+        void findProductById() {
             when(repository.findById(any(UUID.class))).thenReturn(Optional.of(product));
         }
 
@@ -187,11 +187,11 @@ public class ProductServiceSuccedTest {
             return service.create(productRecord);
         }
 
-        public void findCategoryById() {
+        void findCategoryById() {
             when(categoryRepository.findById(any(UUID.class))).thenReturn(Optional.of(category));
         }
 
-        public void findAllProducts() {
+        void findAllProducts() {
             when(repository.findAll()).thenReturn(Collections.singletonList(product));
         }
 
@@ -199,7 +199,7 @@ public class ProductServiceSuccedTest {
             return service.listAll();
         }
 
-        public void searchProduct() {
+        void searchProduct() {
             when(repository.findDistinctByNameContaining(anyString(), any(PageRequest.class)))
                     .thenReturn(new PageImpl<Product>(Collections.singletonList(product)));
         }
@@ -208,7 +208,7 @@ public class ProductServiceSuccedTest {
             return service.search(product.getName(), PageRequest.of(1, 10));
         }
 
-        public void findDistinctByCategory() {
+        void findDistinctByCategory() {
             when(repository.findDistinctByCategory(any(Category.class), any(PageRequest.class)))
                     .thenReturn(new PageImpl<Product>(Collections.singletonList(product)));
         }
@@ -220,7 +220,7 @@ public class ProductServiceSuccedTest {
 
     class Then {
 
-        public void shouldBeSuccessfulValidationRules(ProductRecord record) {
+        void shouldBeSuccessfulValidationRules(ProductRecord record) {
             assertNotNull(record);
             assertNotNull(record.name());
             assertEquals(record.name(), product.getName());
@@ -228,30 +228,30 @@ public class ProductServiceSuccedTest {
             assertEquals(record.idCategory(),product.getCategory().getId());
         }
 
-        public void shouldBeSuccessfulArgumentValidationUpdate() {
+        void shouldBeSuccessfulArgumentValidationUpdate() {
             ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
             verify(repository).save(productCaptor.capture());
             assertNotNull(productCaptor.getValue());
             assertNotNull(productCaptor.getValue().getName());
         }
 
-        public void shouldBeSuccessfulArgumentValidationDelete() {
+        void shouldBeSuccessfulArgumentValidationDelete() {
             ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
             verify(repository).delete(productCaptor.capture());
             assertNotNull(productCaptor.getValue());
             assertNotNull(productCaptor.getValue().getName());
         }
 
-        public void shouldBeSuccessfulValidationFindAllProducts(List<ProductRecord> records) {
+        void shouldBeSuccessfulValidationFindAllProducts(List<ProductRecord> records) {
             assertNotNull(records);
             assertFalse(records.isEmpty());
         }
 
-        public void shouldBeSuccessfulValidationSearchProducts(Page<ProductRecord> productPage) {
+        void shouldBeSuccessfulValidationSearchProducts(Page<ProductRecord> productPage) {
             assertNotNull(productPage);
         }
 
-        public void shouldBeSuccessfulValidationFindProductByCategory(Page<ProductRecord> productRecords) {
+        void shouldBeSuccessfulValidationFindProductByCategory(Page<ProductRecord> productRecords) {
             assertNotNull(productRecords);
         }
     }

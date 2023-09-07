@@ -28,7 +28,7 @@ import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration(classes = ProductMgmtApplicationTests.class)
 @TestInstance(Lifecycle.PER_CLASS)
-public class CategoryRepositorySuccessTest {
+class CategoryRepositorySuccessTest {
 
     @Autowired
     private CategoryRepository repository;
@@ -43,14 +43,14 @@ public class CategoryRepositorySuccessTest {
     
     @Test 
     @Order(0)
-    public void shouldSuccessfulInjectComponent() {
+    void shouldSuccessfulInjectComponent() {
         assertNotNull(repository);
     }
 
     @Order(1)
     @ParameterizedTest
     @MethodSource("provideCategoryData")
-    public void shouldWhenCallCreate(String categoryName) {
+    void shouldWhenCallCreate(String categoryName) {
         Category category = repository.saveAndFlush(new Category(categoryName));
         assertNotNull(category, "Should return Category is not null");
         assertNotNull(category.getId());
@@ -61,7 +61,7 @@ public class CategoryRepositorySuccessTest {
     @Order(2)
     @ParameterizedTest
     @MethodSource("provideCategoryData")
-    public void shouldWhenCallFindById(String categoryName) {
+    void shouldWhenCallFindById(String categoryName) {
         Category category = repository.save(new Category(categoryName));
         Optional<Category> oCategory = repository.findById(category.getId());
         assertNotNull(oCategory.get(), "Should return Category is not null");
@@ -73,7 +73,7 @@ public class CategoryRepositorySuccessTest {
     @Order(3)
     @ParameterizedTest
     @MethodSource("provideCategoryData")
-    public void shouldWhenCallUpdate(String categoryName) {
+    void shouldWhenCallUpdate(String categoryName) {
         String categoryNameUpdate = "Test-Update-Category";
         Category category = repository.save(new Category(categoryName));
         Optional<Category> oCategory = repository.findById(category.getId());
@@ -86,7 +86,7 @@ public class CategoryRepositorySuccessTest {
     @Order(4)
     @ParameterizedTest
     @MethodSource("provideCategoryData")
-    public void shouldWhenCallDelete(String categoryName) {
+    void shouldWhenCallDelete(String categoryName) {
         Category category = repository.save(new Category(categoryName));
         Optional<Category> oCategory = repository.findById(category.getId());
         repository.delete(oCategory.get());

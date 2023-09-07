@@ -26,7 +26,7 @@ import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 import com.barbosa.ms.productmgmt.services.impl.ProductServiceImpl;
 
-public class ProductServiceFailedTest {
+class ProductServiceFailedTest {
     
     @InjectMocks
     private ProductServiceImpl service;
@@ -54,7 +54,7 @@ public class ProductServiceFailedTest {
     }
 
     @Test
-    public void shouldFailWhenCreate() {
+    void shouldFailWhenCreate() {
         given.categoryInicietedForFailedReturn();
         given.productInicietedForFailedReturn();
         given.productRecordInicietedForFailedReturn();
@@ -64,7 +64,7 @@ public class ProductServiceFailedTest {
     }
 
     @Test
-    public void shouldFailWhenFindById() {
+    void shouldFailWhenFindById() {
         given.categoryInicietedForFailedReturn();
         given.productInicietedForFailedReturn();
         when.findProductById();
@@ -72,7 +72,7 @@ public class ProductServiceFailedTest {
     }
 
     @Test
-    public void shouldFailWhenUpdate() {
+    void shouldFailWhenUpdate() {
         given.categoryInicietedForFailedReturn();
         given.productInicietedForFailedReturn();
         given.productRecordInicietedForFailedReturn();
@@ -82,7 +82,7 @@ public class ProductServiceFailedTest {
     }
 
     @Test
-    public void shouldFailWhenDelete() {
+    void shouldFailWhenDelete() {
         given.categoryInicietedForFailedReturn();
         given.productInicietedForFailedReturn();
         given.productRecordInicietedForFailedReturn();
@@ -97,14 +97,14 @@ public class ProductServiceFailedTest {
             return UUID.randomUUID();
         }
 
-        public void categoryInicietedForFailedReturn() {
+        void categoryInicietedForFailedReturn() {
             category = Category.builder()
                 .id(getUUID())
                 .name("Category-Test-Fail")
                 .build();
         }
 
-        public void productInicietedForFailedReturn() {
+        void productInicietedForFailedReturn() {
             product = Product.builder()
                         .category(category)
                         .name(null)
@@ -112,7 +112,7 @@ public class ProductServiceFailedTest {
                         .build();
         }
 
-        public void productRecordInicietedForFailedReturn() {
+        void productRecordInicietedForFailedReturn() {
             productRecord = new ProductRecord(
                 product.getId(), 
                 product.getName(), 
@@ -123,7 +123,7 @@ public class ProductServiceFailedTest {
 
     class When {
 
-        public void saveProductEntity() {
+        void saveProductEntity() {
             doThrow(new DataIntegrityViolationException("Error inserting product"))
                 .when(repository)
                 .save(any(Product.class));
@@ -132,15 +132,15 @@ public class ProductServiceFailedTest {
             return service.create(productRecord);
         }
 
-        public void callProductServiceDelete() {
+        void callProductServiceDelete() {
             service.delete(product.getId());
         }
 
-        public void deleteProductEntity() {
+        void deleteProductEntity() {
             doNothing().when(repository).delete(any(Product.class));
         }
 
-        public void callProductServiceUpdate() {
+        void callProductServiceUpdate() {
             service.update(productRecord);
         }
 
@@ -148,13 +148,13 @@ public class ProductServiceFailedTest {
             return service.findById(product.getId());
         }
 
-        public void findProductById() {
+        void findProductById() {
             doThrow(new ObjectNotFoundException("Product", product.getId()))
                 .when(repository)
                 .findById(any(UUID.class));            
         }
 
-        public void findCategoryById() {
+        void findCategoryById() {
             when(categoryRepository.findById(any(UUID.class))).thenReturn(Optional.of(category));
         }
 
@@ -162,26 +162,26 @@ public class ProductServiceFailedTest {
 
     class Then {
 
-        public void shouldBeFailedWhenCallCreateProduct() {
+        void shouldBeFailedWhenCallCreateProduct() {
             Assertions.assertThrows(DataIntegrityViolationException.class, () -> { 
                 when.callCreateInProductSerivce(); 
             });
         }
 
-        public void shouldBeFailedWhenCallProductFindById() {
+        void shouldBeFailedWhenCallProductFindById() {
             assertThrows(ObjectNotFoundException.class, () -> { 
                 when.callProductServiceFindById();
             });
             
         }
 
-        public void shouldBeFailedWhenCallProductUpdate() {
+        void shouldBeFailedWhenCallProductUpdate() {
             assertThrows(ObjectNotFoundException.class, () -> {
                 when.callProductServiceUpdate();
             });
         }
 
-        public void shouldBeFailedWhenCallProductDelete() {
+        void shouldBeFailedWhenCallProductDelete() {
             assertThrows(ObjectNotFoundException.class, () -> {
                 when.callProductServiceDelete();
             });

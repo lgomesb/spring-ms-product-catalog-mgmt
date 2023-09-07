@@ -35,7 +35,7 @@ import jakarta.validation.ConstraintViolationException;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration(classes = ProductMgmtApplicationTests.class)
 @TestInstance(Lifecycle.PER_CLASS)
-public class CategoryRepositoryFailedTest {
+class CategoryRepositoryFailedTest {
 
     @Autowired
     private CategoryRepository repository;
@@ -49,14 +49,14 @@ public class CategoryRepositoryFailedTest {
 
     
     @BeforeAll
-    public void shouldSuccessfulInjectComponent() {
+    void shouldSuccessfulInjectComponent() {
         assertNotNull(repository);
     }
 
     @Order(0)
     @Test()
     @DisplayName("Should return Exception when Category not null")
-    public void shouldFailWhenCallCreate() {
+    void shouldFailWhenCallCreate() {
         assertThrows(ConstraintViolationException.class, () -> {
             repository.saveAndFlush(new Category(null));
         }, "Should return Error when Category not null");
@@ -66,7 +66,7 @@ public class CategoryRepositoryFailedTest {
     @Order(1)
     @ParameterizedTest
     @MethodSource("provideCategoryData")
-    public void shouldFailWhenCallFindById(String categoryName) {
+    void shouldFailWhenCallFindById(String categoryName) {
         repository.save(new Category(categoryName));
         Optional<Category> oCategory = repository.findById(UUID.randomUUID());
         assertThrows( ObjectNotFoundException.class, () -> {
@@ -79,7 +79,7 @@ public class CategoryRepositoryFailedTest {
     @Order(2)
     @ParameterizedTest
     @MethodSource("provideCategoryData")
-    public void shouldFailWhenCallUpdate(String categoryName) {
+    void shouldFailWhenCallUpdate(String categoryName) {
         String categoryNameUpdate = "";
         Category category = repository.save(new Category(categoryName));
         Optional<Category> oCategory = repository.findById(category.getId());        
@@ -93,7 +93,7 @@ public class CategoryRepositoryFailedTest {
     @Order(3)
     @ParameterizedTest
     @MethodSource("provideCategoryData")
-    public void shouldFailWhenCallDelete(String categoryName) {
+    void shouldFailWhenCallDelete(String categoryName) {
         Category category = new Category(UUID.randomUUID(), categoryName);
         Optional<Category> oCategory = repository.findById(category.getId());
         assertThrows( InvalidDataAccessApiUsageException.class, () -> {

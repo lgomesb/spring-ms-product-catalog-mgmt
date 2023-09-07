@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 
+import java.util.logging.Logger;
+
 @ControllerAdvice
 public class ProductMgmtExceptionHandler {
 
-    
+    Logger logger = Logger.getLogger(ProductMgmtExceptionHandler.class.getName());
     
     @ExceptionHandler( ConstraintViolationException.class )
 	public ResponseEntity<StandardError> constraintViolationError( ConstraintViolationException e, HttpServletRequest request) { 
@@ -24,10 +26,8 @@ public class ProductMgmtExceptionHandler {
             .messege(e.getMessage())
             .path(request.getRequestURI())
             .build();
-
-            System.out.println("#".repeat(10) + "ERROR HANDLER");
-            e.getConstraintViolations().forEach(c -> System.out.println(c.getMessage()));
-
+            logger.info("#".repeat(10) + "ERROR HANDLER");
+            e.getConstraintViolations().forEach(c -> logger.info(c.getMessage()));
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error); 
     }
@@ -60,17 +60,6 @@ public class ProductMgmtExceptionHandler {
                 .build();		
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err); 
         }
-        
-        // @ExceptionHandler(Exception.class)
-        // public ResponseEntity<CustomException> genericError(Exception e, HttpServletRequest request) {
-        //     CustomException error = CustomException.builder()
-        //             .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-        //             .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-        //             .messege(e.getMessage())
-        //             .path(request.getRequestURI())
-        //             .build();
-        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        // }
-        
+
     }
     

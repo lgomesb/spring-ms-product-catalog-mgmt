@@ -1,22 +1,20 @@
 package com.barbosa.ms.productmgmt.services.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.hibernate.ObjectNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.entities.Product;
 import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
 import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 import com.barbosa.ms.productmgmt.services.ProductService;
+import org.hibernate.ObjectNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -28,12 +26,12 @@ public class ProductServiceImpl implements ProductService {
     private CategoryRepository categoryRepository;
 
     @Override
-    public ProductRecord create(ProductRecord record) {
-        Category category = getCategoryById(record.idCategory());
+    public ProductRecord create(ProductRecord recordObject) {
+        Category category = getCategoryById(recordObject.idCategory());
 
         Product product = new Product();
         product.setCategory(category);
-        product.setName(record.name());
+        product.setName(recordObject.name());
         Product productSaved = repository.save(product);
         return new ProductRecord(productSaved.getId(), productSaved.getName(), category.getId());
     }
@@ -45,10 +43,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void update(ProductRecord record) {
-        Product product = getProductById(record.id());
-        product.setName(record.name());
-        product.setCategory(getCategoryById(record.idCategory()));
+    public void update(ProductRecord recordObject) {
+        Product product = getProductById(recordObject.id());
+        product.setName(recordObject.name());
+        product.setCategory(getCategoryById(recordObject.idCategory()));
         product.setModifieldOn(LocalDateTime.now());
         product.setModifiedBy("999999");
         repository.save(product);
@@ -69,7 +67,7 @@ public class ProductServiceImpl implements ProductService {
                         .name(entity.getName())
                         .idCategory(entity.getId())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
     }
 
 

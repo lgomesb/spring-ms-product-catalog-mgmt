@@ -1,19 +1,17 @@
 package com.barbosa.ms.productmgmt.domain.dto;
 
-import java.util.UUID;
-
 import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
-
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+import java.util.UUID;
+
 public class CategoryResponseDTO extends ResponseDTO {
 
-    public static CategoryResponseDTO create(CategoryRecord record) {
+    public static CategoryResponseDTO create(CategoryRecord categoryRecord) {
        return CategoryResponseDTO.builder()
-                .id(record.id())
-                .name(record.name())
+                .id(categoryRecord.id())
+                .name(categoryRecord.name())
                 .build();
     }
 

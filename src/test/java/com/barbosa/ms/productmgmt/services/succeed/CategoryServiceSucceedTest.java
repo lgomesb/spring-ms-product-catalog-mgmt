@@ -21,7 +21,7 @@ import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.services.impl.CategoryServiceImpl;
 
 
-public class CategoryServiceSucceedTest {
+class CategoryServiceSucceedTest {
 
     @InjectMocks
     private CategoryServiceImpl service;
@@ -42,7 +42,7 @@ public class CategoryServiceSucceedTest {
     }
 
     @Test
-    public void shouldSuccessWhenCreate() {
+    void shouldSuccessWhenCreate() {
         given.categoryInicietedForSuccessfulReturn();
         given.categoryRecordInicietedForSuccessfulReturn();
         when.saveCategoryEntity();
@@ -51,7 +51,7 @@ public class CategoryServiceSucceedTest {
     }
 
     @Test
-    public void shouldSuccessWhenFindById() {
+    void shouldSuccessWhenFindById() {
         given.categoryInicietedForSuccessfulReturn();
         when.findCategoryById();
         CategoryRecord record = when.callCategoryServiceFindById();
@@ -59,7 +59,7 @@ public class CategoryServiceSucceedTest {
     }
 
     @Test
-    public void shouldSuccessWhenUpdate() {
+    void shouldSuccessWhenUpdate() {
         given.categoryInicietedForSuccessfulReturn();
         given.categoryRecordInicietedForSuccessfulReturn();
         when.findCategoryById();
@@ -70,7 +70,7 @@ public class CategoryServiceSucceedTest {
     }
 
     @Test
-    public void shouldSuccessWhenDelete() {
+    void shouldSuccessWhenDelete() {
         given.categoryInicietedForSuccessfulReturn();
         when.findCategoryById();
         when.deleteCategoryEntity();
@@ -79,7 +79,7 @@ public class CategoryServiceSucceedTest {
     }
 
     @Test
-    public void shouldSuccessWhenListAll() {
+    void shouldSuccessWhenListAll() {
         given.categoryInicietedForSuccessfulReturn();
         when.findAllCategories();
         List<CategoryRecord>  categoryRecords = when.callListAllInCategoryService();
@@ -92,34 +92,34 @@ public class CategoryServiceSucceedTest {
             return UUID.randomUUID();
         }
 
-        public void categoryInicietedForSuccessfulReturn() {
+        void categoryInicietedForSuccessfulReturn() {
            category = Category.builder()
                         .id(creationIdOfCategory())
                         .name("Category-Test-Success")
                         .build();
         }
 
-        public void categoryRecordInicietedForSuccessfulReturn () {
+        void categoryRecordInicietedForSuccessfulReturn () {
             categoryRecord = new CategoryRecord(category.getId(), category.getName());
         }
     }
 
     class When {
 
-        public void saveCategoryEntity() {
+        void saveCategoryEntity() {
             when(repository.save(any(Category.class)))
             .thenReturn(category);
         }
 
-        public void callCategorySerivceUpdate() {
+        void callCategorySerivceUpdate() {
             service.update(categoryRecord);
         }
 
-        public void callDelteInCategorySerivce() {
+        void callDelteInCategorySerivce() {
             service.delete(given.creationIdOfCategory());
         }
 
-        public void deleteCategoryEntity() {
+        void deleteCategoryEntity() {
             doNothing().when(repository).delete(any(Category.class));
         }
 
@@ -127,7 +127,7 @@ public class CategoryServiceSucceedTest {
             return service.findById(given.creationIdOfCategory());
         }
 
-        public void findCategoryById() {
+        void findCategoryById() {
             when(repository.findById(any(UUID.class))).thenReturn(Optional.of(category));
         }
 
@@ -135,7 +135,7 @@ public class CategoryServiceSucceedTest {
             return service.create(categoryRecord);
         }
 
-        public void findAllCategories() {
+        void findAllCategories() {
             when(repository.findAll()).thenReturn(Collections.singletonList(category));
         }
 
@@ -146,7 +146,7 @@ public class CategoryServiceSucceedTest {
     
     class Then {
 
-        public void shouldBeSuccessfulValidationRules(CategoryRecord record) {
+        void shouldBeSuccessfulValidationRules(CategoryRecord record) {
             assertNotNull(record);
             assertNotNull(record.name());
             assertEquals(record.name(), category.getName());
@@ -154,21 +154,21 @@ public class CategoryServiceSucceedTest {
             assertEquals(record.id(), category.getId());
         }
 
-        public void shouldBeSuccessfulArgumentValidationByDelete() {
+        void shouldBeSuccessfulArgumentValidationByDelete() {
             ArgumentCaptor<Category> categoryCaptor = ArgumentCaptor.forClass(Category.class);
             verify(repository).delete(categoryCaptor.capture());
             assertNotNull(categoryCaptor.getValue());
             assertEquals(categoryCaptor.getValue().getName(),category.getName());
         }
 
-        public void shouldBeSuccessfulArgumentValidationByUpdate() {
+        void shouldBeSuccessfulArgumentValidationByUpdate() {
             ArgumentCaptor<Category> categoryCaptor = ArgumentCaptor.forClass(Category.class);
             verify(repository).save(categoryCaptor.capture());
             assertNotNull(categoryCaptor.getValue());
             assertEquals(categoryCaptor.getValue().getName(),category.getName());
         }
 
-        public void shouldBeSuccessfulArgumentValidationByListAll(List<CategoryRecord> categoryRecords) {
+        void shouldBeSuccessfulArgumentValidationByListAll(List<CategoryRecord> categoryRecords) {
             assertNotNull(categoryRecords);
             assertFalse(categoryRecords.isEmpty());
         }

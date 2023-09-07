@@ -31,7 +31,7 @@ import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ContextConfiguration(classes = ProductMgmtApplicationTests.class)
 @TestInstance(Lifecycle.PER_CLASS)
-public class ProductRepositorySuccessTest {
+class ProductRepositorySuccessTest {
     
     @Autowired
     private ProductRepository repository;
@@ -41,14 +41,14 @@ public class ProductRepositorySuccessTest {
 
     @Test
     @Order(0)
-    public void shouldSuccessfulInjectComponent() {
+    void shouldSuccessfulInjectComponent() {
         assertNotNull(repository);
     }
 
     @Order(1)
     @ParameterizedTest
     @CsvSource({"Test-Create-Product,Category-Test"})
-    public void shouldWhenCallCreate(String productName, String categoryName) {
+    void shouldWhenCallCreate(String productName, String categoryName) {
         product = repository.save(new Product(new Category(categoryName), productName, UUID.randomUUID()));
         assertNotNull(product, "Should return Product is not null");
         assertNotNull(product.getId());
@@ -59,7 +59,7 @@ public class ProductRepositorySuccessTest {
 
     @Test
     @Order(2)
-    public void shouldWhenCallFindById() {
+    void shouldWhenCallFindById() {
         product = repository.save(product);
         Optional<Product> oProduct = repository.findById(product.getId());
         assertNotNull(oProduct.get(), "Should return Product is not null");
@@ -69,7 +69,7 @@ public class ProductRepositorySuccessTest {
 
     @Test
     @Order(3)
-    public void shouldWhenCallUpdate() {
+    void shouldWhenCallUpdate() {
         String productNameUpdate = "Test-Update-Product";
         product = repository.save(product);
         Optional<Product> oProduct = repository.findById(product.getId());
@@ -81,7 +81,7 @@ public class ProductRepositorySuccessTest {
 
     @Test
     @Order(4)
-    public void shouldWhenCallDelete() {
+    void shouldWhenCallDelete() {
         product = repository.save(product);
         Optional<Product> oProduct = repository.findById(product.getId());
         repository.delete(oProduct.get());
