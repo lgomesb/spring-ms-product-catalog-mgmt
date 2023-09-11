@@ -1,4 +1,4 @@
-# Product Management Microservice
+# Product Catalog Management
 ##### _v 1.0.0_
 <i style="font-size:14px">  </i>
 
@@ -17,29 +17,34 @@ This is an application responsible for maintaining a product database.
 - Maintain the product registration in its own database, and allow registration operations, consultation, change of records.
 ```mermaid
 flowchart LR
-    USER1(("`fa:fa-user
-            Use Case`"))
-    CATEGORY_CREATE(["Create Category"])
-    CATEGORY_UPDATE(["Update Category"])
-    CATEGORY_FIND(["Find Category"])
-    CATEGORY_DELETE(["Delete Category"])
+    USER1(("USE CASE"))
+    subgraph Category
+        CATEGORY_CREATE(["Create"])
+        CATEGORY_FIND(["Find by Id"])
+        CATEGORY_UPDATE(["Update"])
+        CATEGORY_DELETE(["Delete"])
+        CATEGORY_SEARCH(["Search by Name"])
+    end
+    subgraph  Product        
+        PRODUCT_CREATE(["Create"])
+        PRODUCT_FIND(["Find by Id"])
+        PRODUCT_UPDATE(["Update"])
+        PRODUCT_DELETE(["Delete"])
+        PRODUCT_SEARCH(["Search by Name"])
+    end
 
-    PRODUCT_CREATE(["Create Product"])
-    PRODUCT_UPDATE(["Update Product"])
-    PRODUCT_FIND(["Find Product"])
-    PRODUCT_DELETE(["Delete Product"])
+USER1 --- CATEGORY_CREATE
+USER1 --- CATEGORY_UPDATE
+USER1 --- CATEGORY_FIND
+USER1 --- CATEGORY_DELETE
+USER1 --- CATEGORY_SEARCH
 
-    direction RL
-    USER1 -.- CATEGORY_CREATE
-    USER1 -.- CATEGORY_UPDATE
-    USER1 -.- CATEGORY_FIND
-    USER1 -.- CATEGORY_DELETE
-    direction LR
-    PRODUCT_CREATE -.- USER1
-    PRODUCT_UPDATE -.- USER1
-    PRODUCT_FIND -.- USER1
-    PRODUCT_DELETE -.- USER1
-    
+PRODUCT_CREATE --- USER1
+PRODUCT_UPDATE --- USER1
+PRODUCT_FIND --- USER1
+PRODUCT_DELETE --- USER1
+PRODUCT_SEARCH --- USER1
+
 ```
 
 #### 2.1 Compoments
