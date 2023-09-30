@@ -6,4 +6,4 @@ spring:
     name: ms-product-catalog-mgmt
   profiles:
     active:
-    - dev
+    - ${ENVIRONMENT:dev}

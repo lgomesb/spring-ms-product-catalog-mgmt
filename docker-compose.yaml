@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  api:
+    build: .
+    image: product-mgmt:latest
+    container_name: product-mgmt
+    ports:
+      - "9090:9090"
+    networks:
+      - frontend
+      - backend
+    environment:
+      - "DATABASE_HOST=product-mgmt-db"
+      - "DATABASE_PORT=5432"
+      - "DATABASE_NAME=product-mgmt"
+      - "DATABASE_USER=postgres"
+      - "DATABASE_PASSWORD=1023040"
+      - "ENVIRONMENT=prod"
+    restart: always
+
+  db:
+    image: postgres
+    container_name: product-mgmt-db
+    networks:
+      - backend
+    environment:
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=1023040"
+      - "POSTGRES_DB=product-mgmt"
+    volumes:
+      - /home/leandro/Projetos/docker/volume/product-mgmt/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
