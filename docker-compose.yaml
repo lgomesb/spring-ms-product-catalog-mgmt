@@ -1,4 +1,4 @@
-version: "3"
+version: "2"
 
 services:
   api:
@@ -8,7 +8,6 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - frontend
       - backend
     environment:
       - "DATABASE_HOST=product-mgmt-db"
@@ -35,7 +34,5 @@ services:
     restart: always
 
 networks:
-  frontend:
-    driver: bridge
   backend:
     driver: bridge

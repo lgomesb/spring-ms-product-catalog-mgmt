@@ -158,6 +158,44 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.43.4</version>
+				<configuration>
+					<verbose>true</verbose>
+					<images>
+						<image>
+							<name>product-mgmt</name>
+							<external>
+								<type>compose</type>
+								<basedir>${project.basedir}</basedir>
+								<composeFile>docker-compose.yaml</composeFile>
+							</external>
+<!--							<build>-->
+<!--								<dockerFileDir>${project.basedir}</dockerFileDir>-->
+<!--								<assembly>-->
+<!--									<descriptorRef>artifact</descriptorRef>-->
+<!--								</assembly>-->
+<!--								<tags>-->
+<!--									<tag>latest</tag>-->
+<!--								</tags>-->
+<!--							</build>-->
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<id>default</id>
+						<phase>install</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>run</goal>
+						</goals>
+					</execution>
+
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
