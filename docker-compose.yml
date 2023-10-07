@@ -4,7 +4,7 @@ services:
   api:
     build: .
     image: product-mgmt:latest
-    container_name: product-mgmt
+    container_name: product-mgmt-app
     ports:
       - "9090:9090"
     networks:
