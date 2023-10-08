@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-mgmt-db
+spec:
+  selector:
+    matchLabels:
+      app: product-mgmt-db
+  template:
+    metadata:
+      labels:
+        app: product-mgmt-db
+    spec:
+      containers:
+      - name: product-mgmt-db
+        image: postgres:latest
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: postgres
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: product-mgmt-data
+      volumes:
+        - hostPath:
+            path: "/home/leandro/Projetos/docker/volume/product-mgmt/postgres"
+          name: product-mgmt-data
+          emptyDir: {}
+  replicas: 1

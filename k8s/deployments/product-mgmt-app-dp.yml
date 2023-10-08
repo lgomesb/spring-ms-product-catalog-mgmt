@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-mgmt-app
+spec:
+  selector:
+    matchLabels:
+      app: product-mgmt-app
+  template:
+    metadata:
+      labels:
+        app: product-mgmt-app
+    spec:
+      containers:
+      - name: product-mgmt-container
+        image:  product-mgmt:latest
+        env:
+        - name: DATABASE_HOST
+          value: product-mgmt-db
+        - name: DATABASE_PORT
+          value: 5432
+        - name: DATABASE_NAME
+          value: product-mgmt                 
+        - name: DATABASE_USER
+          value: postgres                  
+        - name: DATABASE_PASSWORD
+          value: 1023040            
+        - name: ENVIRONMENT
+          value: prod
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"            
+        ports:
+        - containerPort: 9090
+  replicas: 2
