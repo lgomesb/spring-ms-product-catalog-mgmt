@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: product-mgmt-container
-        image:  product-mgmt:latest
+        image: lgomesb/product-mgmt:latest
         env:
         - name: DATABASE_HOST
           value: product-mgmt-db
@@ -24,7 +24,7 @@ spec:
         - name: DATABASE_USER
           value: postgres                  
         - name: DATABASE_PASSWORD
-          value: "1023040"            
+          value: cG9zdGdyZXMK           
         - name: ENVIRONMENT
           value: prod
         resources:
