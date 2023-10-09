@@ -18,13 +18,13 @@ spec:
         - name: DATABASE_HOST
           value: product-mgmt-db
         - name: DATABASE_PORT
-          value: 5432
+          value: "5432"
         - name: DATABASE_NAME
           value: product-mgmt                 
         - name: DATABASE_USER
           value: postgres                  
         - name: DATABASE_PASSWORD
-          value: 1023040            
+          value: "1023040"            
         - name: ENVIRONMENT
           value: prod
         resources:
