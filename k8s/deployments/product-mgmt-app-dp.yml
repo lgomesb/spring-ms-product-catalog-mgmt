@@ -20,11 +20,14 @@ spec:
         - name: DATABASE_PORT
           value: "5432"
         - name: DATABASE_NAME
-          value: product-mgmt                 
+          value: product-mgmt
         - name: DATABASE_USER
-          value: postgres                  
+          value: postgres
         - name: DATABASE_PASSWORD
-          value: cG9zdGdyZXMK           
+          valueFrom:
+            secretKeyRef:
+              name: postgres-pwd-secret
+              key: POSTGRES_PASSWORD
         - name: ENVIRONMENT
           value: prod
         resources:

@@ -18,7 +18,10 @@ spec:
         - name: POSTGRES_USER
           value: postgres
         - name: POSTGRES_PASSWORD
-          value: cG9zdGdyZXMK
+          valueFrom:
+            secretKeyRef:
+              name: postgres-pwd-secret
+              key: POSTGRES_PASSWORD
         - name: POSTGRES_DB
           value: product-mgmt
         resources:
