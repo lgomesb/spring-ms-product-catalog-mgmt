@@ -30,8 +30,12 @@ import java.util.UUID;
 @RequestMapping(value = "/")
 public class ProductController {
 
+    private final ProductService service;
+
     @Autowired
-    private ProductService service;
+    public ProductController(ProductService service) {
+        this.service = service;
+    }
 
     @Operation(summary = "Create product", description = "Create a new product", tags = { "Product" })
     @ApiResponses(value = {

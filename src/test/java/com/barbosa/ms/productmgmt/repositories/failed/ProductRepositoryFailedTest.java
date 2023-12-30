@@ -66,8 +66,9 @@ class ProductRepositoryFailedTest {
     @ParameterizedTest
     @CsvSource({"''"})
     void shouldFailWhenCallCreate(String productName) {
+        Product entity = new Product(category, productName, UUID.randomUUID());
         assertThrows(ConstraintViolationException.class, () -> {
-            repository.saveAndFlush(new Product(category, productName, UUID.randomUUID()));
+            repository.saveAndFlush(entity);
         }, "Product name cannot be null, empty or blank");
     }
 
@@ -88,9 +89,10 @@ class ProductRepositoryFailedTest {
         String productNameUpdate = "";
         product = repository.save(new Product(category, productName, UUID.randomUUID()));
         Optional<Product> oProduct = repository.findById(product.getId());
+        Product newProduct = oProduct.get();
+        newProduct.setName(productNameUpdate);
+
         assertThrows(ConstraintViolationException.class, () -> {
-            Product newProduct = oProduct.get();
-            newProduct.setName(productNameUpdate);
             repository.saveAndFlush(newProduct);
         }, "Product name cannot be null, empty or blank");
     }
@@ -101,8 +103,9 @@ class ProductRepositoryFailedTest {
     void shouldFailWhenCallDelete(String productName) {
         product = repository.save(new Product(category, productName, UUID.randomUUID()));
         Optional<Product> opProduct = repository.findById(UUID.randomUUID());
+        Product entity = opProduct.orElse(null);
         assertThrows( InvalidDataAccessApiUsageException.class, () -> {
-            repository.delete(opProduct.orElse(null));
+            repository.delete(entity);
         }, "Should return Error when Product not blank or empty");
     }
 }

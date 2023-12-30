@@ -1,5 +1,7 @@
 package com.barbosa.ms.productmgmt;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +18,11 @@ public class ProductMgmtApplicationTests implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		System.out.println("::::::::::::::: TESTE ::::::::::::::::::::");
+	}
+
+	@Test
+	void assertTrue() {
+		Assertions.assertTrue(Boolean.TRUE);
 	}
 
 }

@@ -15,8 +15,12 @@ import java.util.UUID;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
+    private final CategoryRepository repository;
+
     @Autowired
-    private CategoryRepository repository;
+    public CategoryServiceImpl(CategoryRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public CategoryRecord create(CategoryRecord recordObject) {

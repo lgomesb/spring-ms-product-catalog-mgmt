@@ -26,7 +26,7 @@ public class ProductMgmtExceptionHandler {
             .messege(e.getMessage())
             .path(request.getRequestURI())
             .build();
-            logger.info("#".repeat(10) + "ERROR HANDLER");
+            logger.info(() -> "#".repeat(10) + "ERROR HANDLER");
             e.getConstraintViolations().forEach(c -> logger.info(c.getMessage()));
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error); 

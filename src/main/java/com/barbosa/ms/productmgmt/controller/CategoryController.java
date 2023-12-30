@@ -28,11 +28,14 @@ import java.util.UUID;
 @RequestMapping(value = "/category")
 public class CategoryController {
 
-    @Autowired
-    private CategoryService service;
+    private final CategoryService service;
+    private final ProductService productService;
 
     @Autowired
-    private ProductService productService;
+    public CategoryController(CategoryService service, ProductService productService) {
+        this.service = service;
+        this.productService = productService;
+    }
 
     @Operation(summary = "Create category", description = "Create a new category", tags = { "Category" })
     @PostMapping

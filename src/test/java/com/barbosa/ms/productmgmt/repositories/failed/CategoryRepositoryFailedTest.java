@@ -57,9 +57,8 @@ class CategoryRepositoryFailedTest {
     @Test()
     @DisplayName("Should return Exception when Category not null")
     void shouldFailWhenCallCreate() {
-        assertThrows(ConstraintViolationException.class, () -> {
-            repository.saveAndFlush(new Category(null));
-        }, "Should return Error when Category not null");
+        Category entity = new Category(null);
+        assertThrows(ConstraintViolationException.class, () -> repository.saveAndFlush(entity), "Should return Error when Category not null");
     }
 
 
@@ -82,10 +81,11 @@ class CategoryRepositoryFailedTest {
     void shouldFailWhenCallUpdate(String categoryName) {
         String categoryNameUpdate = "";
         Category category = repository.save(new Category(categoryName));
-        Optional<Category> oCategory = repository.findById(category.getId());        
+        Optional<Category> oCategory = repository.findById(category.getId());
+        Category newCategory = oCategory.get();
+        newCategory.setName(categoryNameUpdate);
+
         assertThrows(ConstraintViolationException.class, () -> {
-            Category newCategory = oCategory.get();
-            newCategory.setName(categoryNameUpdate);
             repository.saveAndFlush(newCategory);
         }, "Should return Error when Category not blank or empty");
     }
@@ -96,8 +96,9 @@ class CategoryRepositoryFailedTest {
     void shouldFailWhenCallDelete(String categoryName) {
         Category category = new Category(UUID.randomUUID(), categoryName);
         Optional<Category> oCategory = repository.findById(category.getId());
+        Category entity = oCategory.orElse(null);
         assertThrows( InvalidDataAccessApiUsageException.class, () -> {
-            repository.delete(oCategory.orElse(null));
+            repository.delete(entity);
         }, "Should return Error when Category not blank or empty");
     }
 }
