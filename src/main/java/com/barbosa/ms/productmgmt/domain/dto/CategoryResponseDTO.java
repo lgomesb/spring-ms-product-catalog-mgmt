@@ -2,8 +2,6 @@ package com.barbosa.ms.productmgmt.domain.dto;
 
 import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
-
 import java.util.UUID;
 
 public class CategoryResponseDTO extends ResponseDTO {

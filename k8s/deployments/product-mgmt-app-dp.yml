@@ -32,9 +32,19 @@ spec:
         - name: ENVIRONMENT
           value: prod
         resources:
+          requests:
+            cpu: 400m
+            memory: 0.5G
           limits:
-            memory: "256Mi"
-            cpu: "500m"            
+            cpu: 800m
+            memory: 0.8G
         ports:
         - containerPort: 9090
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 9090
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          failureThreshold: 10
   replicas: 2
