@@ -37,7 +37,7 @@ spec:
             memory: 0.5G
           limits:
             cpu: 800m
-            memory: 0.8G
+            memory: 1.0G
         ports:
         - containerPort: 9090
         livenessProbe:

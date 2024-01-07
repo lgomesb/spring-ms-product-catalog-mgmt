@@ -8,6 +8,7 @@ import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 import com.barbosa.ms.productmgmt.services.ProductService;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -74,11 +75,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
+    @Cacheable(cacheNames = "productRecords",
+            key = "{#name, #pageRequest.pageSize, #pageRequest.pageNumber}")
     @Override
     public Page<ProductRecord> search(String name, PageRequest pageRequest) {
 
         Page<Product> products = repository.findDistinctByNameContaining(name, pageRequest);
-
+        pageRequest.getPageSize();
+        pageRequest.getPageNumber();
         return products.map(entity -> ProductRecord.builder()
                 .id(entity.getId())
                 .name(entity.getName())
@@ -87,6 +91,7 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
+    @Cacheable(cacheNames = "productRecords", key = "{#idCategory, #pageRequest.pageSize, #pageRequest.pageNumber}")
     @Override
     public Page<ProductRecord> findByCategory(UUID idCategory, PageRequest pageRequest) {
         Category category = this.getCategoryById(idCategory);
