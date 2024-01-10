@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-mgmt-cache
+  namespace: product-mgmt
+data:
+  redis.conf: |
+    protected-mode no
+    maxmemory 32mb
+    maxmemory-policy allkeys-lru

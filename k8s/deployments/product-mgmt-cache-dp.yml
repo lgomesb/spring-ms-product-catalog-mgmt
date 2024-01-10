@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-mgmt-cache
+  namespace: product-mgmt
+  labels:
+    name: product-mgmt-cache
+spec:
+  selector:
+    matchLabels:
+      app: product-mgmt-cache
+  template:
+    metadata:
+      labels:
+        app: product-mgmt-cache
+    spec:
+      containers:
+      - name: product-mgmt-cache
+        image: redis:latest
+        resources:
+          limits:
+            memory: "1.0G"
+            cpu: "500m"
+        ports:
+        - containerPort: 6379
+  replicas: 1
