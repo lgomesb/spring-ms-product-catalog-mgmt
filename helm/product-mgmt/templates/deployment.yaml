@@ -29,17 +29,17 @@ spec:
         {{- end }}
         resources:
           requests:
-            cpu: 400m
-            memory: 0.5G
+            cpu: {{ .Values.resources.requests.cpu | default "400m" }}
+            memory: {{ .Values.resources.requests.cpu | default "0.5G" }}
           limits:
-            cpu: "2"
-            memory: 1.0G
+            cpu: {{ .Values.resources.requests.cpu | default "2" }}
+            memory: {{ .Values.resources.requests.cpu | default "1.0G" }}
         ports:
-        - containerPort: 9090
+        - containerPort: {{ .Values.port | default 9090 }}
         livenessProbe:
           httpGet:
-            path: /product-mgmt/actuator/health/liveness
-            port: 9090
+            path: {{ .Values.context_path | default .Release.Name }}/actuator/health/liveness
+            port: {{ .Values.port | default 9090 }}
           initialDelaySeconds: 3
           periodSeconds: 3
           failureThreshold: 10

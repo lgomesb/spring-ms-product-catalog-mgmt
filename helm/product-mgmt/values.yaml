@@ -23,3 +23,12 @@ env:
         key: REDIS_PASSWORD
   - name: ENVIRONMENT
     value: prod
+resources:
+  requests:
+    cpu: 400m
+    memory: 0.5G
+  limits:
+    cpu: "2"
+    memory: 1.0G
+port: 9090
+context_path: /product-mgmt
