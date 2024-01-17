@@ -1,0 +1,25 @@
+env:
+  - name: DATABASE_HOST
+    value: product-mgmt-db
+  - name: DATABASE_PORT
+    value: "5432"
+  - name: DATABASE_NAME
+    value: product-mgmt
+  - name: DATABASE_USER
+    value: postgres
+  - name: DATABASE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgres-pwd-secret
+        key: POSTGRES_PASSWORD
+  - name: CACHE_HOST
+    value: product-mgmt-cache
+  - name: CACHE_PORT
+    value: "6379"
+  - name: CACHE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: redis-pwd-secret
+        key: REDIS_PASSWORD
+  - name: ENVIRONMENT
+    value: prod

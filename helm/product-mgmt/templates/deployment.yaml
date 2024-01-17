@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}      
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-container
+        image: lgomesb/{{ .Release.Name }}:latest
+        env:
+        {{- range $env := .Values.env }}
+        - name: {{ $env.name }}          
+          {{- with $env.valueFrom }}
+          valueFrom: 
+            secretKeyRef:
+              name: {{ .secretKeyRef.name }}
+              key: {{ .secretKeyRef.key }}
+          {{- else }}
+          value: {{ $env.value }}
+          {{- end }}
+        {{- end }}
+        resources:
+          requests:
+            cpu: 400m
+            memory: 0.5G
+          limits:
+            cpu: "2"
+            memory: 1.0G
+        ports:
+        - containerPort: 9090
+        livenessProbe:
+          httpGet:
+            path: /product-mgmt/actuator/health/liveness
+            port: 9090
+          initialDelaySeconds: 3
+          periodSeconds: 3
+          failureThreshold: 10
+  replicas: 2

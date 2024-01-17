@@ -8,13 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class HealthConfig {
 
-    @Value("${spring.data.redis.password}")
-    private String hostCache;
-
     @Bean
     public HealthVO healthVO() {
-        System.out.println("::::::::::::::::: HOST - CACHE :::::::::::: ");
-        System.out.println(hostCache);
         return new HealthVO(Boolean.TRUE);
     }
 }

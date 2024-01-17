@@ -45,15 +45,15 @@ spec:
             cpu: 400m
             memory: 0.5G
           limits:
-            cpu: 800m
+            cpu: "2"
             memory: 1.0G
         ports:
         - containerPort: 9090
         livenessProbe:
           httpGet:
-            path: /actuator/health
+            path: /product-mgmt/actuator/health/liveness
             port: 9090
-          initialDelaySeconds: 10
-          periodSeconds: 30
+          initialDelaySeconds: 3
+          periodSeconds: 3
           failureThreshold: 10
   replicas: 2
