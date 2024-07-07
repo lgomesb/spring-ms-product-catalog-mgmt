@@ -1,26 +1,16 @@
 package com.barbosa.ms.productmgmt.controllers;
 
-import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.UUID;
-
+import com.barbosa.ms.productmgmt.ProductMgmtApplicationTests;
+import com.barbosa.ms.productmgmt.controller.ProductController;
+import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
 import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
 import com.barbosa.ms.productmgmt.services.ProductService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestMethodOrder;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,11 +20,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.barbosa.ms.productmgmt.ProductMgmtApplicationTests;
-import com.barbosa.ms.productmgmt.controller.ProductController;
+import java.util.Collections;
+import java.util.UUID;
 
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
+import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 
 @ActiveProfiles(value = "test")
@@ -92,7 +86,7 @@ class ProductControllerTest {
     void shouldSucceededWhenCallCreate() {
 
         when(service.create(any(ProductRecord.class)))
-                .thenReturn(new ProductRecord(UUID.randomUUID(), "Teste", UUID_CATEGORY));
+                .thenReturn(new ProductRecord(UUID.randomUUID(), "Teste", new CategoryRecord(UUID_CATEGORY, null)));
 
         Response response = given()
             .port(port)
@@ -121,7 +115,7 @@ class ProductControllerTest {
     void shouldSucceededWhenCallFindById() {
 
         when(service.findById(any(UUID.class)))
-                .thenReturn(new ProductRecord(UUID.randomUUID(), "Teste", UUID_CATEGORY));
+                .thenReturn(new ProductRecord(UUID.randomUUID(), "Teste", new CategoryRecord(UUID_CATEGORY, null)));
 
         Response response = given()
             .port(port)
@@ -182,7 +176,8 @@ class ProductControllerTest {
         when(service.search(anyString(), any(PageRequest.class)))
                 .thenReturn(new PageImpl<ProductRecord>(
                         Collections.singletonList(
-                                new ProductRecord(UUID.randomUUID(), "Test-Product-01", UUID_CATEGORY))));
+                                new ProductRecord(UUID.randomUUID(), "Test-Product-01",
+                                        new CategoryRecord(UUID_CATEGORY, null)))));
 
         given()
                 .port(port)

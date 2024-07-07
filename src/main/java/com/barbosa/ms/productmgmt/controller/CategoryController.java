@@ -80,7 +80,7 @@ public class CategoryController {
     public ResponseEntity<List<CategoryResponseDTO>> listAll() {
         List<CategoryResponseDTO> categories = service.listAll()
                 .stream()
-                .map(CategoryResponseDTO::create)
+                .map(CategoryResponseDTO::fromRecord)
                 .toList();
 
         return ResponseEntity.ok(categories);
@@ -100,7 +100,7 @@ public class CategoryController {
         Page<ProductRecord> productRecords = productService.findByCategory(UUID.fromString(id), pageRequest);
 
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                        .body(productRecords.map(ProductResponseDTO::create));
+                        .body(productRecords.map(ProductResponseDTO::fromRecord));
     }
 
 }

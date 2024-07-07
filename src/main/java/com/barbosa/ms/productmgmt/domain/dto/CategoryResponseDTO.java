@@ -6,11 +6,14 @@ import java.util.UUID;
 
 public class CategoryResponseDTO extends ResponseDTO {
 
-    public static CategoryResponseDTO create(CategoryRecord categoryRecord) {
-       return CategoryResponseDTO.builder()
-                .id(categoryRecord.id())
-                .name(categoryRecord.name())
-                .build();
+    public static CategoryResponseDTO fromRecord(CategoryRecord categoryRecord) {
+        if(categoryRecord != null)
+            return CategoryResponseDTO.builder()
+                    .id(categoryRecord.id())
+                    .name(categoryRecord.name())
+                    .build();
+
+        return null;
     }
 
     @Builder

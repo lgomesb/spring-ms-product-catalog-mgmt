@@ -176,7 +176,9 @@ class CategoryControllerTest {
         when(productService.findByCategory(any(UUID.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl<ProductRecord>(
                         Collections.singletonList(
-                                new ProductRecord(UUID.randomUUID(), "Test-Product-01", UUID_CATEGORY))));
+                                new ProductRecord(UUID.randomUUID(),
+                                        "Test-Product-01",
+                                        new CategoryRecord(UUID_CATEGORY, null)))));
         given()
                 .port(port)
                 .contentType(ContentType.JSON)

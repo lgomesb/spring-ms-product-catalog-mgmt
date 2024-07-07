@@ -1,7 +1,9 @@
 package com.barbosa.ms.productmgmt.controller;
 
+import com.barbosa.ms.productmgmt.domain.dto.CategoryResponseDTO;
 import com.barbosa.ms.productmgmt.domain.dto.ProductRequestDTO;
 import com.barbosa.ms.productmgmt.domain.dto.ProductResponseDTO;
+import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
 import com.barbosa.ms.productmgmt.domain.records.ProductRecord;
 import com.barbosa.ms.productmgmt.exception.StandardError;
 import com.barbosa.ms.productmgmt.services.ProductService;
@@ -50,8 +52,13 @@ public class ProductController {
     })
     @PostMapping(value = "product")
     public ResponseEntity<ProductResponseDTO> create(@RequestBody ProductRequestDTO dto) {
-
-        ProductRecord productRecord = service.create(new ProductRecord(null, dto.getName(), dto.getUUIDCategory()));
+        ProductRecord productRecord = ProductRecord.builder()
+                .name(dto.getName())
+                .category(CategoryRecord.builder()
+                        .id(dto.getUUIDCategory())
+                        .build())
+                .build();
+        productRecord = service.create(productRecord);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -68,7 +75,7 @@ public class ProductController {
         ProductResponseDTO response = ProductResponseDTO.builder()
                 .id(productRecord.id().toString())
                 .name(productRecord.name())
-                .idCategory(productRecord.idCategory().toString())
+                .category(CategoryResponseDTO.fromRecord(productRecord.category()))
                 .build();
         return ResponseEntity.ok().body(response);
     }
@@ -76,7 +83,14 @@ public class ProductController {
     @Operation(summary = "Update product by Id", description = "Update product by id", tags = { "Product" })
     @PutMapping("product/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody ProductRequestDTO dto) {
-        service.update(new ProductRecord(UUID.fromString(id), dto.getName(), dto.getUUIDCategory()));
+        ProductRecord productRecord = ProductRecord.builder()
+                .name(dto.getName())
+                .category(CategoryRecord.builder()
+                        .id(dto.getUUIDCategory())
+                        .build())
+                .build();
+
+        service.update(productRecord);
         return ResponseEntity.accepted().build();
     }
 
@@ -98,7 +112,7 @@ public class ProductController {
 
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
         Page<ProductRecord> records = service.search(decodeParam(name), pageRequest);
-        Page<ProductResponseDTO> products = records.map(ProductResponseDTO::create);
+        Page<ProductResponseDTO> products = records.map(ProductResponseDTO::fromRecord);
 
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(products);
     }

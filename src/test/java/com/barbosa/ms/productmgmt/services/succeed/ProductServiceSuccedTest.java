@@ -149,10 +149,7 @@ class ProductServiceSuccedTest {
         }
 
         void productRecordInicietedForSuccessfulReturn() {
-            productRecord = new ProductRecord(
-                product.getId(), 
-                product.getName(), 
-                product.getCategory().getId()); 
+            productRecord = ProductRecord.fromEntity(product);
         }
 
     }
@@ -225,7 +222,7 @@ class ProductServiceSuccedTest {
             assertNotNull(record.name());
             assertEquals(record.name(), product.getName());
             assertEquals(record.id(), product.getId());
-            assertEquals(record.idCategory(),product.getCategory().getId());
+            assertEquals(record.category().id(),product.getCategory().getId());
         }
 
         void shouldBeSuccessfulArgumentValidationUpdate() {

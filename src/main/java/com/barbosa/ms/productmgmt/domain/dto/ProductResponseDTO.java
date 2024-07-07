@@ -12,21 +12,21 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class ProductResponseDTO extends ResponseDTO {
     
-    private String idCategory;
+    private CategoryResponseDTO category;
 
     @Builder
-    public ProductResponseDTO(String id, String name, String idCategory) { 
+    public ProductResponseDTO(String id, String name, CategoryResponseDTO category) {
         super();
         super.setId(UUID.fromString(id));
         super.setName(name);
-        this.idCategory = idCategory;
+        this.category = category;
     }
 
-    public static ProductResponseDTO create(ProductRecord productRecord) {
+    public static ProductResponseDTO fromRecord(ProductRecord productRecord) {
         return ProductResponseDTO.builder()
             .id(productRecord.id().toString())
             .name(productRecord.name())
-            .idCategory(productRecord.idCategory().toString())
+            .category(CategoryResponseDTO.fromRecord(productRecord.category()))
             .build();
     }
 }
