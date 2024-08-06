@@ -72,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Cacheable(cacheNames = "productRecords", // cacheManager = "cacheManager",
-            key = "{#name, #pageRequest.pageSize, #pageRequest.pageNumber}")
+            key = "{#name, #pageRequest.pageSize, #pageRequest.pageNumber, #pageRequest.sort}")
     @Override
     public Page<ProductRecord> search(String name, PageRequest pageRequest) {
         Page<Product> products = repository.findDistinctByNameContaining(name, pageRequest);

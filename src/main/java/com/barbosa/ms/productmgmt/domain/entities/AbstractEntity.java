@@ -1,20 +1,15 @@
 package com.barbosa.ms.productmgmt.domain.entities;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @EqualsAndHashCode(of = "id")
 @Data
@@ -28,7 +23,7 @@ public abstract class AbstractEntity implements Serializable {
     @NotNull(message = "{field.name.required}")
     @NotBlank(message = "{field.name.not-blank}")
     @NotEmpty(message = "{field.name.required}")
-    @Column(columnDefinition = "varchar(255) not null")
+    @Column(columnDefinition = "varchar(255) not null", unique = true)
     private String name;
     
     @Column(columnDefinition = "varchar(1) not null default 'A'")

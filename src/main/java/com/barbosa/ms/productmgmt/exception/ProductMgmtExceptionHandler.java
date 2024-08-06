@@ -2,6 +2,7 @@ package com.barbosa.ms.productmgmt.exception;
 
 
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,13 +24,24 @@ public class ProductMgmtExceptionHandler {
         StandardError error = StandardError.builder()
             .status(HttpStatus.BAD_REQUEST.value())
             .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-            .messege(e.getMessage())
+            .message(e.getMessage())
             .path(request.getRequestURI())
             .build();
             logger.info(() -> "#".repeat(10) + "ERROR HANDLER");
             e.getConstraintViolations().forEach(c -> logger.info(c.getMessage()));
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error); 
+    }
+
+    @ExceptionHandler( DataIntegrityViolationException.class )
+	public ResponseEntity<StandardError> dataIntegrityViolationException( DataIntegrityViolationException e, HttpServletRequest request) {
+        StandardError error = StandardError.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+            .message((e.getMessage().contains("Unique")? "The value already exists" : e.getMessage()))
+            .path(request.getRequestURI())
+            .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler( MethodArgumentNotValidException.class )
@@ -55,7 +67,7 @@ public class ProductMgmtExceptionHandler {
             StandardError err = StandardError.builder()
                 .status(HttpStatus.NOT_FOUND.value())
                 .error("Resource is: " + HttpStatus.NOT_FOUND.getReasonPhrase())
-                .messege(e.getMessage())
+                .message(e.getMessage())
                 .path(request.getRequestURI())
                 .build();		
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err); 

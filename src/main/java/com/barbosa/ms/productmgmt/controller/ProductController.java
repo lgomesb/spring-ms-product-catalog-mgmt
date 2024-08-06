@@ -30,6 +30,7 @@ import java.util.UUID;
 @Tag(name = "Product", description = "Endpoints for product operations")
 @RestController
 @RequestMapping(value = "/")
+@CrossOrigin("http://localhost:4200")
 public class ProductController {
 
     private final ProductService service;
@@ -110,7 +111,10 @@ public class ProductController {
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
-        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+        PageRequest pageRequest = PageRequest.of(page,
+                linesPerPage,
+                Direction.valueOf(direction.toUpperCase()),
+                orderBy);
         Page<ProductRecord> records = service.search(decodeParam(name), pageRequest);
         Page<ProductResponseDTO> products = records.map(ProductResponseDTO::fromRecord);
 

@@ -4,7 +4,7 @@ create table category (
     created_on timestamp(6),
     modified_by varchar(100),
     modified_on timestamp(6),
-    name varchar(255) not null not null,
+    name varchar(255) not null not null unique,
     status varchar(1) not null default 'A',
     primary key (id)
 );

@@ -1,11 +1,12 @@
 package com.barbosa.ms.productmgmt.domain.entities;
 
-import java.util.UUID;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
 
 @NoArgsConstructor
 @Table(name = "category")

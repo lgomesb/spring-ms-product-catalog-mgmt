@@ -26,6 +26,7 @@ import java.util.UUID;
 @Tag(name = "Category", description = "Endpoints for category operations")
 @RestController
 @RequestMapping(value = "/category")
+@CrossOrigin("http://localhost:4200")
 public class CategoryController {
 
     private final CategoryService service;
