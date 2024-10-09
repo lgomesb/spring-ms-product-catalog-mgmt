@@ -103,7 +103,7 @@ class ProductServiceSuccedTest {
         given.categoryInicietedForSuccessfulReturn();
         given.productInicietedForSuccessfulReturn();
         when.findAllProducts();
-        List<ProductRecord> records = when.callProductServiceListAll();
+        Page<ProductRecord> records = when.callProductServiceListAll();
         then.shouldBeSuccessfulValidationFindAllProducts(records);
     }
 
@@ -189,11 +189,12 @@ class ProductServiceSuccedTest {
         }
 
         void findAllProducts() {
-            when(repository.findAll()).thenReturn(Collections.singletonList(product));
+            when(repository.findAll(any(PageRequest.class)))
+                    .thenReturn(new PageImpl<>(Collections.singletonList(product)));
         }
 
-        public List<ProductRecord> callProductServiceListAll() {
-            return service.listAll();
+        public Page<ProductRecord> callProductServiceListAll() {
+            return service.listAll(PageRequest.of(1, 10));
         }
 
         void searchProduct() {
@@ -239,7 +240,7 @@ class ProductServiceSuccedTest {
             assertNotNull(productCaptor.getValue().getName());
         }
 
-        void shouldBeSuccessfulValidationFindAllProducts(List<ProductRecord> records) {
+        void shouldBeSuccessfulValidationFindAllProducts(Page<ProductRecord> records) {
             assertNotNull(records);
             assertFalse(records.isEmpty());
         }

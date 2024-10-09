@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +26,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Product", description = "Endpoints for product operations")
 @RestController
 @RequestMapping(value = "/")
-@CrossOrigin("http://localhost:4200")
 public class ProductController {
 
     private final ProductService service;
@@ -104,7 +105,7 @@ public class ProductController {
 
     @Operation(summary = "Product list pageable", description = "List product in the database", tags = { "Product" })
     @GetMapping("product")
-    public ResponseEntity<Page<ProductResponseDTO>> search(
+    public ResponseEntity<List<ProductResponseDTO>> search(
             @RequestParam(value = "name", defaultValue = "") String name,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "5") Integer linesPerPage,
@@ -118,7 +119,16 @@ public class ProductController {
         Page<ProductRecord> records = service.search(decodeParam(name), pageRequest);
         Page<ProductResponseDTO> products = records.map(ProductResponseDTO::fromRecord);
 
-        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(products);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Range", "products "
+                + pageRequest.getOffset()
+                + "-" + (pageRequest.getOffset()
+                + products.getNumberOfElements()) + "/"
+                + products.getTotalElements());
+        headers.add("Access-Control-Expose-Headers", "Content-Range");
+        headers.add("X-Total-Count", String.valueOf(products.getTotalElements()));
+
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).headers(headers).body(products.getContent());
     }
 
     private static String decodeParam(String s) {

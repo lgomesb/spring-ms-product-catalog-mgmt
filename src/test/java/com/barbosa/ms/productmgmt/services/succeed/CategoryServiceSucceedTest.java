@@ -1,24 +1,26 @@
 package com.barbosa.ms.productmgmt.services.succeed;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.*;
-
+import com.barbosa.ms.productmgmt.domain.entities.Category;
+import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
+import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
+import com.barbosa.ms.productmgmt.services.impl.CategoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
-import com.barbosa.ms.productmgmt.domain.entities.Category;
-import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
-import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
-import com.barbosa.ms.productmgmt.services.impl.CategoryServiceImpl;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 
 class CategoryServiceSucceedTest {
@@ -46,7 +48,7 @@ class CategoryServiceSucceedTest {
         given.categoryInicietedForSuccessfulReturn();
         given.categoryRecordInicietedForSuccessfulReturn();
         when.saveCategoryEntity();
-        CategoryRecord record = when.callCreateInCategorySerivce();
+        CategoryRecord record = when.callCreateInCategoryService();
         then.shouldBeSuccessfulValidationRules(record);
     }
 
@@ -82,7 +84,7 @@ class CategoryServiceSucceedTest {
     void shouldSuccessWhenListAll() {
         given.categoryInicietedForSuccessfulReturn();
         when.findAllCategories();
-        List<CategoryRecord>  categoryRecords = when.callListAllInCategoryService();
+        Page<CategoryRecord>  categoryRecords = when.callListAllInCategoryService();
         then.shouldBeSuccessfulArgumentValidationByListAll(categoryRecords);
     }
 
@@ -131,16 +133,17 @@ class CategoryServiceSucceedTest {
             when(repository.findById(any(UUID.class))).thenReturn(Optional.of(category));
         }
 
-        public CategoryRecord callCreateInCategorySerivce() {
+        public CategoryRecord callCreateInCategoryService() {
             return service.create(categoryRecord);
         }
 
         void findAllCategories() {
-            when(repository.findAll()).thenReturn(Collections.singletonList(category));
+            when(repository.findAll(any(PageRequest.class)))
+                    .thenReturn(new PageImpl<>(Collections.singletonList(category)));
         }
 
-        public List<CategoryRecord> callListAllInCategoryService() {
-            return service.listAll();
+        public Page<CategoryRecord> callListAllInCategoryService() {
+            return service.listAll(PageRequest.of(1, 10));
         }
     }
     
@@ -168,7 +171,7 @@ class CategoryServiceSucceedTest {
             assertEquals(categoryCaptor.getValue().getName(),category.getName());
         }
 
-        void shouldBeSuccessfulArgumentValidationByListAll(List<CategoryRecord> categoryRecords) {
+        void shouldBeSuccessfulArgumentValidationByListAll(Page<CategoryRecord> categoryRecords) {
             assertNotNull(categoryRecords);
             assertFalse(categoryRecords.isEmpty());
         }

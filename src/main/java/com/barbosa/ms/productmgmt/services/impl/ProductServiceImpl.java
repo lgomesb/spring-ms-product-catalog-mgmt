@@ -14,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -63,11 +62,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductRecord> listAll() {
-        return repository.findAll()
-                .stream()
-                .map(ProductRecord::fromEntity)
-                .toList();
+    public Page<ProductRecord> listAll(PageRequest pageRequest) {
+        Page<Product> products = repository.findAll(pageRequest);
+        return products.map(ProductRecord::fromEntity);
     }
 
 

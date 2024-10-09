@@ -6,10 +6,11 @@ import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.services.CategoryService;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -57,14 +58,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryRecord> listAll() {
-        return repository.findAll()
-            .stream()
-            .map(entity -> CategoryRecord.builder()
+    public Page<CategoryRecord> listAll(PageRequest pageRequest) {
+        Page<Category> categories = repository.findAll(pageRequest);
+        return categories.map(entity -> CategoryRecord.builder()
                     .id(entity.getId())
                     .name(entity.getName())
-                    .build())
-            .toList();
+                    .build());
     }
     
     

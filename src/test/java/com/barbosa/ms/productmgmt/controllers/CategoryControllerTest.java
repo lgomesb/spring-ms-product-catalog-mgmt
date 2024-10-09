@@ -155,8 +155,10 @@ class CategoryControllerTest {
     @Test
     @Order(4)
     void shouldSucceededWhenCallListAll() {
-        when(service.listAll()).thenReturn(
-                Collections.singletonList(new CategoryRecord(UUID_CATEGORY, "Test-Category-01")));
+        when(service.listAll(any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(
+                        Collections.singletonList(
+                                new CategoryRecord(UUID_CATEGORY, "Test-Category-01"))));
 
         given()
                 .port(port)

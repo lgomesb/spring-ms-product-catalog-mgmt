@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,6 @@ import java.util.UUID;
 @Tag(name = "Category", description = "Endpoints for category operations")
 @RestController
 @RequestMapping(value = "/category")
-@CrossOrigin("http://localhost:4200")
 public class CategoryController {
 
     private final CategoryService service;
@@ -78,14 +78,27 @@ public class CategoryController {
 
     @Operation(summary = "List all categories", description = "List all categories in the database", tags = {"Category"})
     @GetMapping()
-    public ResponseEntity<List<CategoryResponseDTO>> listAll() {
-        List<CategoryResponseDTO> categories = service.listAll()
-                .stream()
-                .map(CategoryResponseDTO::fromRecord)
-                .toList();
+    public ResponseEntity<List<CategoryResponseDTO>> listAll(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "linesPerPage", defaultValue = "5") Integer linesPerPage,
+            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
-        return ResponseEntity.ok(categories);
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+        Page<CategoryRecord> categoryRecords = service.listAll(pageRequest);
+        Page<CategoryResponseDTO> categories = categoryRecords.map(CategoryResponseDTO::fromRecord);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Range", "categories "
+                + pageRequest.getOffset()
+                + "-" + (pageRequest.getOffset()
+                + categories.getNumberOfElements()) + "/"
+                + categories.getTotalElements());
+        headers.add("X-Total-Count", String.valueOf(categories.getTotalElements()));
+
+        return ResponseEntity.ok().headers(headers).body(categories.getContent());
     }
+
 
     @Operation(summary = "Products of category", description = "List product of category in the database", tags = {
             "Category" })
