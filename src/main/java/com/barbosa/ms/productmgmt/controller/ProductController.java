@@ -85,6 +85,7 @@ public class ProductController {
     @PutMapping("product/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody ProductRequestDTO dto) {
         ProductRecord productRecord = ProductRecord.builder()
+                .id(UUID.fromString(id))
                 .name(dto.getName())
                 .category(CategoryRecord.builder()
                         .id(dto.getUUIDCategory())
