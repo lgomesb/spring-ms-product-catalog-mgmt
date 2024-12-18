@@ -14,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +41,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "productRecords", allEntries = true)
     public ProductRecord findById(UUID id) {
         Product product = getProductById(id);
         return ProductRecord.fromEntity(product);
@@ -52,8 +52,6 @@ public class ProductServiceImpl implements ProductService {
         Product product = getProductById(recordObject.id());
         product.setName(recordObject.name());
         product.setCategory(getCategoryById(recordObject.category().id()));
-        product.setModifieldOn(LocalDateTime.now());
-        product.setModifiedBy("999999");
         repository.save(product);
     }
 

@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void update(CategoryRecord recordObject) {
         Category category = this.getCategoryById(recordObject.id());
         category.setName(recordObject.name());
-        category.setModifieldOn(LocalDateTime.now());
+        category.setModifiedOn(LocalDateTime.now());
         category.setModifiedBy("99999");
         repository.save(category);      
     }

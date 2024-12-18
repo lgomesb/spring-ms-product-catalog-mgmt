@@ -36,16 +36,23 @@ public abstract class AbstractEntity implements Serializable {
     private String createdBy;
 
     @Column(name = "modified_on")
-    private LocalDateTime modifieldOn;
+    private LocalDateTime modifiedOn;
 
     @Column(name = "modified_by", columnDefinition = "varchar(100)")
     private String modifiedBy;
 
+    @PreUpdate
     @PrePersist
     public void prePersist() {
-        setCreatedOn(LocalDateTime.now());
-        setCreatedBy("99999");
-        setStatus("A");
+        if(this.createdOn == null) {
+            this.setCreatedOn(LocalDateTime.now());
+            this.setCreatedBy("99999");
+            this.setStatus("A");
+        } else {
+            this.setModifiedOn(LocalDateTime.now());
+            this.setModifiedBy("99999");
+        }
     }
-    
+
+
 }
