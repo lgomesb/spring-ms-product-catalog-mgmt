@@ -79,7 +79,7 @@ public class CategoryController {
     }
 
     @Operation(summary = "List all categories", description = "List all categories in the database", tags = {"Category"})
-    @GetMapping()
+    @GetMapping("/all")
     public ResponseEntity<List<CategoryResponseDTO>> listAll() {
         List<CategoryResponseDTO> categories = service.listAll()
                 .stream()
@@ -90,7 +90,7 @@ public class CategoryController {
     }
 
     @Operation(summary = "Category list pageable", description = "List categories in the database", tags = {"Category"})
-    @GetMapping("/page")
+    @GetMapping()
     public ResponseEntity<Page<CategoryResponseDTO>> search(
             @RequestParam(value = "name", defaultValue = "") String name,
             @RequestParam(value = "page", defaultValue = "0") Integer page,

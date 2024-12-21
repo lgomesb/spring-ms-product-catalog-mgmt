@@ -1,26 +1,30 @@
 package com.barbosa.ms.productmgmt.services.succeed;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.*;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import com.barbosa.ms.productmgmt.domain.entities.Category;
 import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
 import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.services.impl.CategoryServiceImpl;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 class CategoryServiceSucceedTest {
 
     @InjectMocks
@@ -31,59 +35,68 @@ class CategoryServiceSucceedTest {
     
     private Category category;
     private CategoryRecord categoryRecord;
-    private Given given = new Given();
-    private When when = new When();
-    private Then then = new Then();
+    private final Given given = new Given();
+    private final When when = new When();
+    private final Then then = new Then();
 
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
+    @DisplayName("Create a new Category")
     void shouldSuccessWhenCreate() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.categoryRecordInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
+        given.categoryRecordInitiatedForSuccessfulReturn();
         when.saveCategoryEntity();
-        CategoryRecord record = when.callCreateInCategorySerivce();
-        then.shouldBeSuccessfulValidationRules(record);
+        CategoryRecord successCategoryRecord = when.callCreateInCategoryService();
+        then.shouldBeSuccessfulValidationRules(successCategoryRecord);
     }
 
     @Test
+    @DisplayName("Find a Category by id")
     void shouldSuccessWhenFindById() {
-        given.categoryInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
         when.findCategoryById();
-        CategoryRecord record = when.callCategoryServiceFindById();
-        then.shouldBeSuccessfulValidationRules(record);
+        CategoryRecord successCategoryRecord = when.callCategoryServiceFindById();
+        then.shouldBeSuccessfulValidationRules(successCategoryRecord);
     }
 
     @Test
+    @DisplayName("Update a Category")
     void shouldSuccessWhenUpdate() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.categoryRecordInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
+        given.categoryRecordInitiatedForSuccessfulReturn();
         when.findCategoryById();
         when.callCategoryServiceFindById();
         when.saveCategoryEntity();
-        when.callCategorySerivceUpdate();
+        when.callCategoryServiceUpdate();
         then.shouldBeSuccessfulArgumentValidationByUpdate();        
     }
 
     @Test
+    @DisplayName("Delete a Category")
     void shouldSuccessWhenDelete() {
-        given.categoryInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
         when.findCategoryById();
         when.deleteCategoryEntity();
-        when.callDelteInCategorySerivce();    
+        when.callDeleteInCategoryService();    
         then.shouldBeSuccessfulArgumentValidationByDelete();    
     }
 
     @Test
+    @DisplayName("Get all Categories")
     void shouldSuccessWhenListAll() {
-        given.categoryInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
         when.findAllCategories();
-        List<CategoryRecord>  categoryRecords = when.callListAllInCategoryService();
+        List<CategoryRecord> categoryRecords = when.callListAllInCategoryService();
         then.shouldBeSuccessfulArgumentValidationByListAll(categoryRecords);
+    }
+
+    @Test
+    @DisplayName("Get pageable list Categories")
+    void shouldSuccessWhenSearch() {
+        given.categoryInitiatedForSuccessfulReturn();
+        given.findDistinctByNameContaining();
+        Page<CategoryRecord> categoryRecords = when.callSearchInCategoryService();
+        then.shouldBeSuccessfulArgumentValidationBySearchCategory(categoryRecords);
     }
 
     class Given {
@@ -92,15 +105,21 @@ class CategoryServiceSucceedTest {
             return UUID.randomUUID();
         }
 
-        void categoryInicietedForSuccessfulReturn() {
+        void categoryInitiatedForSuccessfulReturn() {
            category = Category.builder()
                         .id(creationIdOfCategory())
                         .name("Category-Test-Success")
                         .build();
         }
 
-        void categoryRecordInicietedForSuccessfulReturn () {
+        void categoryRecordInitiatedForSuccessfulReturn () {
             categoryRecord = new CategoryRecord(category.getId(), category.getName());
+        }
+
+        public void findDistinctByNameContaining() {
+            doReturn(new PageImpl<>(Collections.singletonList(category)))
+                    .when(repository)
+                    .findDistinctByNameContaining(anyString(), any(PageRequest.class));
         }
     }
 
@@ -111,11 +130,11 @@ class CategoryServiceSucceedTest {
             .thenReturn(category);
         }
 
-        void callCategorySerivceUpdate() {
+        void callCategoryServiceUpdate() {
             service.update(categoryRecord);
         }
 
-        void callDelteInCategorySerivce() {
+        void callDeleteInCategoryService() {
             service.delete(given.creationIdOfCategory());
         }
 
@@ -131,7 +150,7 @@ class CategoryServiceSucceedTest {
             when(repository.findById(any(UUID.class))).thenReturn(Optional.of(category));
         }
 
-        public CategoryRecord callCreateInCategorySerivce() {
+        public CategoryRecord callCreateInCategoryService() {
             return service.create(categoryRecord);
         }
 
@@ -142,16 +161,20 @@ class CategoryServiceSucceedTest {
         public List<CategoryRecord> callListAllInCategoryService() {
             return service.listAll();
         }
+
+        public Page<CategoryRecord> callSearchInCategoryService() {
+            return service.search(category.getName(), PageRequest.of(1, 10));
+        }
     }
     
     class Then {
 
-        void shouldBeSuccessfulValidationRules(CategoryRecord record) {
-            assertNotNull(record);
-            assertNotNull(record.name());
-            assertEquals(record.name(), category.getName());
-            assertNotNull(record.id());
-            assertEquals(record.id(), category.getId());
+        void shouldBeSuccessfulValidationRules(CategoryRecord categoryRecord) {
+            assertNotNull(categoryRecord);
+            assertNotNull(categoryRecord.name());
+            assertEquals(categoryRecord.name(), category.getName());
+            assertNotNull(categoryRecord.id());
+            assertEquals(categoryRecord.id(), category.getId());
         }
 
         void shouldBeSuccessfulArgumentValidationByDelete() {
@@ -169,6 +192,11 @@ class CategoryServiceSucceedTest {
         }
 
         void shouldBeSuccessfulArgumentValidationByListAll(List<CategoryRecord> categoryRecords) {
+            assertNotNull(categoryRecords);
+            assertFalse(categoryRecords.isEmpty());
+        }
+
+        public void shouldBeSuccessfulArgumentValidationBySearchCategory(Page<CategoryRecord> categoryRecords) {
             assertNotNull(categoryRecords);
             assertFalse(categoryRecords.isEmpty());
         }

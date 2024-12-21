@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ProductServiceSuccedTest {
+class ProductServiceSucceedTest {
     
     @InjectMocks
     private ProductServiceImpl service;
@@ -53,29 +53,29 @@ class ProductServiceSuccedTest {
 
     @Test
     void shouldSuccessWhenCreate() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.productInicietedForSuccessfulReturn();
-        given.productRecordInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
+        given.productInitiatedForSuccessfulReturn();
+        given.productRecordInitiatedForSuccessfulReturn();
         when.findCategoryById();
         when.saveProductEntity();
-        ProductRecord record = when.callCreateInCategorySerivce();
-        then.shouldBeSuccessfulValidationRules(record);
+        ProductRecord recordResult = when.callCreateInCategoryService();
+        then.shouldBeSuccessfulValidationRules(recordResult);
     }
 
     @Test
     void shouldSuccessWhenFindById() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.productInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
+        given.productInitiatedForSuccessfulReturn();
         when.findProductById();
-        ProductRecord record = when.callProductServiceFindById();
-        then.shouldBeSuccessfulValidationRules(record);
+        ProductRecord recordResult = when.callProductServiceFindById();
+        then.shouldBeSuccessfulValidationRules(recordResult);
     }
 
     @Test
     void shouldSuccessWhenUpdate() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.productInicietedForSuccessfulReturn();
-        given.productRecordInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
+        given.productInitiatedForSuccessfulReturn();
+        given.productRecordInitiatedForSuccessfulReturn();
         when.findCategoryById();
         when.findProductById();
         when.saveProductEntity();
@@ -85,9 +85,9 @@ class ProductServiceSuccedTest {
 
     @Test
     void shouldSuccessWhenDelete() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.productInicietedForSuccessfulReturn();
-        given.productRecordInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
+        given.productInitiatedForSuccessfulReturn();
+        given.productRecordInitiatedForSuccessfulReturn();
         when.findProductById();
         when.deleteProductEntity();
         when.callProductServiceDelete();
@@ -96,8 +96,8 @@ class ProductServiceSuccedTest {
 
     @Test
     void shouldSuccessWhenListAll() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.productInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
+        given.productInitiatedForSuccessfulReturn();
         when.findAllProducts();
         List<ProductRecord> records = when.callProductServiceListAll();
         then.shouldBeSuccessfulValidationFindAllProducts(records);
@@ -105,8 +105,8 @@ class ProductServiceSuccedTest {
 
     @Test
     void shouldSuccessWhenSearchProduct() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.productInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
+        given.productInitiatedForSuccessfulReturn();
         when.searchProduct();
         Page<ProductRecord> productRecords = when.callProductServiceSearch();
         then.shouldBeSuccessfulValidationSearchProducts(productRecords);
@@ -114,8 +114,8 @@ class ProductServiceSuccedTest {
 
     @Test
     void shouldSuccessWhenFindProductByCategory() {
-        given.categoryInicietedForSuccessfulReturn();
-        given.productInicietedForSuccessfulReturn();
+        given.categoryInitiatedForSuccessfulReturn();
+        given.productInitiatedForSuccessfulReturn();
         when.findCategoryById();
         when.findDistinctByCategory();
         Page<ProductRecord> productRecords = when.callFindProductByCategory();
@@ -129,14 +129,14 @@ class ProductServiceSuccedTest {
             return UUID.randomUUID();
         }
 
-        void categoryInicietedForSuccessfulReturn() {
+        void categoryInitiatedForSuccessfulReturn() {
             category = Category.builder()
                 .id(getUUID())
                 .name("Category-Test-Success")
                 .build();
         }
 
-        void productInicietedForSuccessfulReturn() {
+        void productInitiatedForSuccessfulReturn() {
             product = Product.builder()
                         .category(category)
                         .name("Test-Product")
@@ -144,7 +144,7 @@ class ProductServiceSuccedTest {
                         .build();
         }
 
-        void productRecordInicietedForSuccessfulReturn() {
+        void productRecordInitiatedForSuccessfulReturn() {
             productRecord = ProductRecord.fromEntity(product);
         }
 
@@ -176,7 +176,7 @@ class ProductServiceSuccedTest {
             when(repository.findById(any(UUID.class))).thenReturn(Optional.of(product));
         }
 
-        public ProductRecord callCreateInCategorySerivce() {
+        public ProductRecord callCreateInCategoryService() {
             return service.create(productRecord);
         }
 
@@ -194,7 +194,7 @@ class ProductServiceSuccedTest {
 
         void searchProduct() {
             when(repository.findDistinctByNameContaining(anyString(), any(PageRequest.class)))
-                    .thenReturn(new PageImpl<Product>(Collections.singletonList(product)));
+                    .thenReturn(new PageImpl<>(Collections.singletonList(product)));
         }
 
         public Page<ProductRecord> callProductServiceSearch() {
@@ -213,12 +213,12 @@ class ProductServiceSuccedTest {
 
     class Then {
 
-        void shouldBeSuccessfulValidationRules(ProductRecord record) {
-            assertNotNull(record);
-            assertNotNull(record.name());
-            assertEquals(record.name(), product.getName());
-            assertEquals(record.id(), product.getId());
-            assertEquals(record.category().id(),product.getCategory().getId());
+        void shouldBeSuccessfulValidationRules(ProductRecord productRecord) {
+            assertNotNull(productRecord);
+            assertNotNull(productRecord.name());
+            assertEquals(productRecord.name(), product.getName());
+            assertEquals(productRecord.id(), product.getId());
+            assertEquals(productRecord.category().id(),product.getCategory().getId());
         }
 
         void shouldBeSuccessfulArgumentValidationUpdate() {

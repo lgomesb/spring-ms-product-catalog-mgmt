@@ -37,8 +37,8 @@ import static org.mockito.Mockito.when;
 @TestInstance(Lifecycle.PER_CLASS)
 class ProductControllerTest {
 
-    private static UUID UUID_CATEGORY;
-    private static UUID UUID_PRODUCT;
+    private static UUID uuidCategory;
+    private static UUID uuidProduct;
     private static final String CATEGORY_URI = "/category";
     private static final String PRODUCT_URI = "/product";
 
@@ -57,6 +57,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Create a new Category")
     @Order(0)
     void shouldSucceededWhenCallCreateCategory() {
 
@@ -77,21 +78,22 @@ class ProductControllerTest {
         String idCategory = response.getHeader("Location");
         idCategory = idCategory.substring(idCategory.lastIndexOf("/")+1);
         assertFalse(idCategory.isEmpty());
-        UUID_CATEGORY = UUID.fromString(idCategory);
+        uuidCategory = UUID.fromString(idCategory);
 
     }
 
     @Test
+    @DisplayName("Create a new Product")
     @Order(1)
     void shouldSucceededWhenCallCreate() {
 
         when(service.create(any(ProductRecord.class)))
-                .thenReturn(new ProductRecord(UUID.randomUUID(), "Teste", new CategoryRecord(UUID_CATEGORY, null)));
+                .thenReturn(new ProductRecord(UUID.randomUUID(), "Teste", new CategoryRecord(uuidCategory, null)));
 
         Response response = given()
             .port(port)
             .contentType(ContentType.JSON)
-            .body(String.format("{\"name\": \"Teste\", \"idCategory\":\"%s\"}", UUID_CATEGORY.toString()))
+            .body(String.format("{\"name\": \"Teste\", \"idCategory\":\"%s\"}", uuidCategory.toString()))
             .log().all()
             .when()
             .post(PRODUCT_URI)
@@ -106,21 +108,22 @@ class ProductControllerTest {
         idProduct = idProduct.substring(idProduct.lastIndexOf("/")+1);
         assertNotNull(idProduct);
         assertFalse(idProduct.isEmpty());
-        UUID_PRODUCT = UUID.fromString(idProduct);
+        uuidProduct = UUID.fromString(idProduct);
 
     }
 
     @Test
+    @DisplayName("Get a Product")
     @Order(2)
     void shouldSucceededWhenCallFindById() {
 
         when(service.findById(any(UUID.class)))
-                .thenReturn(new ProductRecord(UUID.randomUUID(), "Teste", new CategoryRecord(UUID_CATEGORY, null)));
+                .thenReturn(new ProductRecord(UUID.randomUUID(), "Teste", new CategoryRecord(uuidCategory, null)));
 
         Response response = given()
             .port(port)
             .contentType(ContentType.JSON)
-            .pathParam("id", UUID_PRODUCT.toString())
+            .pathParam("id", uuidProduct.toString())
             .when()
             .get(PRODUCT_URI + "/{id}")
             .then()
@@ -136,14 +139,15 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Update a Product")
     @Order(3)
     void shouldSucceededWhenCallUpdate() {
 
         given()
             .port(port)
             .contentType(ContentType.JSON)
-            .pathParam("id", UUID_PRODUCT.toString())
-            .body(String.format("{\"name\": \"Teste-Update\", \"idCategory\":\"%s\"}", UUID_CATEGORY.toString()))
+            .pathParam("id", uuidProduct.toString())
+            .body(String.format("{\"name\": \"Teste-Update\", \"idCategory\":\"%s\"}", uuidCategory.toString()))
             .log().all()
             .when()
             .put(PRODUCT_URI + "/{id}")
@@ -154,13 +158,14 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Delete a Product")
     @Order(4)
     void shouldSucceededWhenCallDelete() {
 
         given()
             .port(port)
             .contentType(ContentType.JSON)
-            .pathParam("id", UUID_PRODUCT.toString())
+            .pathParam("id", uuidProduct.toString())
             .log().all()
             .when()
             .delete(PRODUCT_URI + "/{id}")
@@ -171,13 +176,17 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("List pageable Products")
     @Order(5)
     void shouldSucceededWhenCallSearch() {
+        ProductRecord productRecord = ProductRecord.builder()
+                .id(UUID.randomUUID())
+                .name("Test-Product-01")
+                .category(new CategoryRecord(uuidCategory, null))
+                .build();
+
         when(service.search(anyString(), any(PageRequest.class)))
-                .thenReturn(new PageImpl<ProductRecord>(
-                        Collections.singletonList(
-                                new ProductRecord(UUID.randomUUID(), "Test-Product-01",
-                                        new CategoryRecord(UUID_CATEGORY, null)))));
+                .thenReturn(new PageImpl<>(Collections.singletonList(productRecord)));
 
         given()
                 .port(port)

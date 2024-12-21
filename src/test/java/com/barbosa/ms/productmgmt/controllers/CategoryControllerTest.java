@@ -21,13 +21,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 @TestInstance(Lifecycle.PER_CLASS)
 class CategoryControllerTest {
 
-    private static UUID UUID_CATEGORY;
+    private static UUID uuidCategory;
     private static final String CATEGORY_URI = "/category";
 
     @LocalServerPort
@@ -66,35 +66,38 @@ class CategoryControllerTest {
 
     }
 
+
     @Test
+    @DisplayName("Create a new Category")
     @Order(0)
-    void shouldSucceededWhenCallCreate() throws UnknownHostException {
+    void shouldSucceededWhenCallCreate() {
 
         when(service.create(any(CategoryRecord.class))).thenReturn(categoryRecord);
 
         Response response = given()
-            .port(port)
-            .contentType(ContentType.JSON)
-            .body("{\"name\": \""+ categoryRecord.name() +"\"}")
-            .log().all()
-            .when()
-            .post(CATEGORY_URI)
-            .then()
-            .assertThat()
-            .statusCode(HttpStatus.CREATED.value())
-            .extract()
-            .response();
-            
+                .port(port)
+                .contentType(ContentType.JSON)
+                .body("{\"name\": \""+ categoryRecord.name() +"\"}")
+                .log().all()
+                .when()
+                .post(CATEGORY_URI)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract()
+                .response();
+
         assertNotNull(response);
         String idCategory = response.getHeader("Location");
         idCategory = idCategory.substring(idCategory.lastIndexOf("/")+1);
         assertNotNull(idCategory);
         assertFalse(idCategory.isEmpty());
-        UUID_CATEGORY = UUID.fromString(idCategory);
+        uuidCategory = UUID.fromString(idCategory);
 
     }
 
     @Test
+    @DisplayName("Find a Category by Id")
     @Order(1)
     void shouldSucceededWhenCallFindById() {
         when(service.findById(any(UUID.class))).thenReturn(categoryRecord);
@@ -102,7 +105,7 @@ class CategoryControllerTest {
         Response response = given()
             .port(port)
             .contentType(ContentType.JSON)
-            .pathParam("id", UUID_CATEGORY.toString())
+            .pathParam("id", uuidCategory.toString())
             .when()
             .get(CATEGORY_URI + "/{id}")
             .then()
@@ -118,13 +121,14 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Update a Category")
     @Order(2)
     void shouldSucceededWhenCallUpdate() {
 
         given()
             .port(port)
             .contentType(ContentType.JSON)
-            .pathParam("id", UUID_CATEGORY.toString())
+            .pathParam("id", uuidCategory.toString())
             .body("{\"name\": \"Teste-2\"}")
             .log().all()
             .when()
@@ -136,13 +140,14 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("Delete a Category")
     @Order(3)
     void shouldSucceededWhenCallDelete() {
 
         given()
             .port(port)
             .contentType(ContentType.JSON)
-            .pathParam("id", UUID_CATEGORY.toString())
+            .pathParam("id", uuidCategory.toString())
             .log().all()
             .when()
             .delete(CATEGORY_URI + "/{id}")
@@ -153,10 +158,30 @@ class CategoryControllerTest {
     }
 
     @Test
+    @DisplayName("List all Categories")
     @Order(4)
     void shouldSucceededWhenCallListAll() {
         when(service.listAll()).thenReturn(
-                Collections.singletonList(new CategoryRecord(UUID_CATEGORY, "Test-Category-01")));
+                Collections.singletonList(new CategoryRecord(uuidCategory, "Test-Category-01")));
+
+        given()
+                .port(port)
+                .contentType(ContentType.JSON)
+                .log().all()
+                .when()
+                .get(CATEGORY_URI.concat("/all"))
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value());
+
+    }
+
+    @Test
+    @DisplayName("List Pageable Categories")
+    @Order(5)
+    void shouldSucceededWhenCallGetPageableCategories() {
+        when(service.search(anyString(), any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(categoryRecord)));
 
         given()
                 .port(port)
@@ -166,23 +191,27 @@ class CategoryControllerTest {
                 .get(CATEGORY_URI)
                 .then()
                 .assertThat()
-                .statusCode(HttpStatus.OK.value());
+                .statusCode(HttpStatus.PARTIAL_CONTENT.value());
 
     }
 
     @Test
-    @Order(5)
+    @DisplayName("Get Products by a Category")
+    @Order(6)
     void shouldSucceededWhenCallGetProductsByCategory() {
+        ProductRecord productRecord = ProductRecord.builder()
+                .id(UUID.randomUUID())
+                .name("Test-Product-01")
+                .category(new CategoryRecord(uuidCategory, null))
+                .build();
+
         when(productService.findByCategory(any(UUID.class), any(PageRequest.class)))
-                .thenReturn(new PageImpl<ProductRecord>(
-                        Collections.singletonList(
-                                new ProductRecord(UUID.randomUUID(),
-                                        "Test-Product-01",
-                                        new CategoryRecord(UUID_CATEGORY, null)))));
+                .thenReturn(new PageImpl<>(Collections.singletonList(productRecord)));
+
         given()
                 .port(port)
                 .contentType(ContentType.JSON)
-                .pathParam("id", UUID_CATEGORY.toString())
+                .pathParam("id", uuidCategory.toString())
                 .log().all()
                 .when()
                 .get(CATEGORY_URI + "/{id}/products")
