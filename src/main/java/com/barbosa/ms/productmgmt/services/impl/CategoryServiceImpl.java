@@ -6,6 +6,8 @@ import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.services.CategoryService;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -66,6 +68,12 @@ public class CategoryServiceImpl implements CategoryService {
                     .build())
             .toList();
     }
-    
-    
+
+
+    @Override
+    public Page<CategoryRecord> search(String name, PageRequest pageRequest) {
+        Page<Category> categories = repository.findDistinctByNameContaining(name, pageRequest);
+
+        return categories.map(CategoryRecord::fromEntity);
+    }
 }

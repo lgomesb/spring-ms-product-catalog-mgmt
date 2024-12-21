@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,6 +89,26 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
     }
 
+    @Operation(summary = "Category list pageable", description = "List categories in the database", tags = {"Category"})
+    @GetMapping("/page")
+    public ResponseEntity<Page<CategoryResponseDTO>> search(
+            @RequestParam(value = "name", defaultValue = "") String name,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "linesPerPage", defaultValue = "5") Integer linesPerPage,
+            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
+
+        PageRequest pageRequest = PageRequest.of(page,
+                linesPerPage,
+                Direction.valueOf(direction.toUpperCase()),
+                orderBy);
+
+        Page<CategoryRecord> records = service.search(decodeParam(name), pageRequest);
+        Page<CategoryResponseDTO> categories = records.map(CategoryResponseDTO::fromRecord);
+
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(categories);
+    }
+
     @Operation(summary = "Products of category", description = "List product of category in the database", tags = {
             "Category" })
     @GetMapping("/{id}/products")
@@ -102,6 +124,10 @@ public class CategoryController {
 
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
                         .body(productRecords.map(ProductResponseDTO::fromRecord));
+    }
+
+    private static String decodeParam(String s) {
+        return URLDecoder.decode(s, StandardCharsets.UTF_8);
     }
 
 }

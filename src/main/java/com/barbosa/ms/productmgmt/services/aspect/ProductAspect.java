@@ -1,4 +1,4 @@
-package com.barbosa.ms.productmgmt.controller;
+package com.barbosa.ms.productmgmt.services.aspect;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
