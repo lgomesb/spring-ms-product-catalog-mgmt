@@ -11,39 +11,58 @@ This is an application responsible for maintaining a product database.
     |![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java$logoColor=white) | JDK 17|
     |---|---|
     |![Spring Boot](https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot) | `v 3.0.6` |
+    | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge) | latest      |
+    | ![H2 Database](https://img.shields.io/badge/H2_Database-09476B?style=for-the-badge&logo=h2database) | latest      |
+    | ![Flyway](https://img.shields.io/badge/Flyway-CC0200?style=for-the-badge&logo=flyway)             | latest      |
+    | ![Lombok](https://img.shields.io/badge/Lombok-B6A272?style=for-the-badge&logo=lombok)             | latest      |
+    | ModelMapper        | 3.0.0       |
+    | ![OpenAPI](https://img.shields.io/badge/OpenAPI-000?style=for-the-badge&logo=openapiinitiative) | 2.1.0       |
 
 
 ### **2. Use Case**
 - Maintain the product registration in its own database, and allow registration operations, consultation, change of records.
 ```mermaid
 flowchart LR
-    USER1(("USE CASE"))
-    subgraph Category
-        CATEGORY_CREATE(["Create"])
-        CATEGORY_FIND(["Find by Id"])
-        CATEGORY_UPDATE(["Update"])
-        CATEGORY_DELETE(["Delete"])
-        CATEGORY_SEARCH(["Search by Name"])
-    end
-    subgraph  Product        
-        PRODUCT_CREATE(["Create"])
-        PRODUCT_FIND(["Find by Id"])
-        PRODUCT_UPDATE(["Update"])
-        PRODUCT_DELETE(["Delete"])
-        PRODUCT_SEARCH(["Search by Name"])
+
+    subgraph body [" "]
+        subgraph user_category["CATEGORY"]
+            direction LR
+            USER1(("USE CASE"))
+            subgraph Category[" "]
+                CATEGORY_CREATE(["Create"])
+                CATEGORY_FIND(["Find by Id"])
+                CATEGORY_UPDATE(["Update"])
+                CATEGORY_DELETE(["Delete"])
+                CATEGORY_SEARCH(["Search by Name"])
+            end
+        end
+
+        subgraph user_product["PRODUCT"]
+            direction LR
+            USER2(("USE CASE"))
+            subgraph product[" "]
+                PRODUCT_CREATE(["Create"])
+                PRODUCT_FIND(["Find by Id"])
+                PRODUCT_UPDATE(["Update"])
+                PRODUCT_DELETE(["Delete"])
+                PRODUCT_SEARCH(["Search by Name"])
+            end
+        end
+   
     end
 
-USER1 --- CATEGORY_CREATE
-USER1 --- CATEGORY_UPDATE
-USER1 --- CATEGORY_FIND
-USER1 --- CATEGORY_DELETE
-USER1 --- CATEGORY_SEARCH
+USER1 --> CATEGORY_CREATE
+USER1 --> CATEGORY_UPDATE
+USER1 --> CATEGORY_FIND
+USER1 --> CATEGORY_DELETE
+USER1 --> CATEGORY_SEARCH
 
-PRODUCT_CREATE --- USER1
-PRODUCT_UPDATE --- USER1
-PRODUCT_FIND --- USER1
-PRODUCT_DELETE --- USER1
-PRODUCT_SEARCH --- USER1
+USER2 --- PRODUCT_CREATE
+USER2 --- PRODUCT_UPDATE
+USER2 --- PRODUCT_FIND
+USER2 --- PRODUCT_DELETE
+USER2 --- PRODUCT_SEARCH
+
 
 ```
 
@@ -57,7 +76,7 @@ flowchart LR
     subgraph ER
         Product --> Category
     end
-    MSProduct{{\n MS Product Mgmt \n\n}}
+    MSProduct{{MS Product Mgmt}}
     DB[(Database)]
     DB -.-> ER
     
@@ -174,11 +193,55 @@ classDiagram
     JpaRepositories <|-- CategoryRepository
     ProductController o-- ProductService
     CategoryController o-- CategoryService
-    
+
+```
 
 
+## 4. How to Run
 
+### Development Environment
 
+```sh
+./mvnw spring-boot:run
+```
+
+The service will be available at: [http://localhost:8080/product-order](http://localhost:8080/product-order)
+
+### Product Environment (Docker)
+
+```sh
+docker-compose up --build
+```
+
+The service will be available at: [http://localhost:9090/product-order](http://localhost:9090/product-order)
+
+## 5. Main Endpoints
+
+- `POST   /`           - Create product
+- `GET    /{id}`       - Find product by ID
+- `PUT    /{id}`       - Update product
+- `PATCH  /{id}`       - Change product status
+- `DELETE /{id}`       - Delete product
+- `GET    /`           - List all products
+
+## 6. Tests
+
+To run automated tests:
+
+```sh
+./mvnw test
+```
+
+## 7. OpenAPI Documentation
+
+Acess the documentation at:  
+[http://localhost:8080/product-order/swagger-ui.html](http://localhost:8080/product-order/swagger-ui.html)  
+or
+[http://localhost:9090/product-order/swagger-ui.html](http://localhost:9090/product-order/swagger-ui.html) (produção)
+
+---
+
+> Projetc developed by Leandro Barbosa.
     
 ```
 

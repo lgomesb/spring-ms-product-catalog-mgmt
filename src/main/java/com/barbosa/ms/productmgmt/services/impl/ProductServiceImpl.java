@@ -7,7 +7,6 @@ import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.repositories.ProductRepository;
 import com.barbosa.ms.productmgmt.services.ProductService;
 import org.hibernate.ObjectNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -23,7 +22,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository repository;
     private final CategoryRepository categoryRepository;
 
-    @Autowired
     public ProductServiceImpl(ProductRepository repository, CategoryRepository categoryRepository) {
         this.repository = repository;
         this.categoryRepository = categoryRepository;

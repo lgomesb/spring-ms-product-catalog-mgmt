@@ -5,7 +5,6 @@ import com.barbosa.ms.productmgmt.domain.records.CategoryRecord;
 import com.barbosa.ms.productmgmt.repositories.CategoryRepository;
 import com.barbosa.ms.productmgmt.services.CategoryService;
 import org.hibernate.ObjectNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository repository;
 
-    @Autowired
     public CategoryServiceImpl(CategoryRepository repository) {
         this.repository = repository;
     }
